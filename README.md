@@ -48,7 +48,7 @@ All three cards show **sample data**. Click a card to see the full-size PNG.
 
 - **Your year at a glance** — commit contributions, contributed repositories, longest streak, and busiest month.
 - **A personal card** — your avatar, display name, top public repository, and a playful builder title.
-- **The fuller picture** — monthly activity, a contribution calendar, active days, and repository language mix.
+- **The fuller picture** — monthly activity, a contribution calendar, active days, and repository language mix. Tap or focus months and days for exact counts; browse the calendar with arrow keys.
 - **A shareable result** — matching page and PNG layouts, plus links that keep your year and theme.
 - **Public data, server-side access** — visitors never enter a token; self-hosters configure one on the server.
 - **A small, inspectable stack** — Next.js, React, TypeScript, and GitHub’s GraphQL API. No database or AI API required.

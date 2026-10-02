@@ -1,10 +1,9 @@
 import { ImageResponse } from "next/og";
 import { SocialCard } from "@/components/SocialCard";
 import { getWrapped } from "@/lib/github";
-import { getDemoStats } from "@/lib/demo";
 import { parseInput } from "@/lib/input";
 import { parsePresentation } from "@/lib/presentation";
-import { cardFonts } from "@/lib/card-assets";
+import { socialFonts } from "@/lib/image-fonts";
 import type { WrappedStats } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -20,7 +19,7 @@ export async function GET(request: Request) {
       stats = await getWrapped(input.username, input.year, params.get("demo") === "1");
     } catch { failed = true; } // Keep shared links useful when GitHub is temporarily unavailable.
   }
-  const font = await cardFonts(getDemoStats(2025));
+  const font = await socialFonts();
   const response = new ImageResponse(<SocialCard stats={stats} theme={theme} fontFamily={font.fontFamily} labelFontFamily={font.labelFontFamily} serifFontFamily={font.serifFontFamily} />, {
     width: 1200, height: 630, fonts: font.fonts,
     headers: { "Cache-Control": failed ? "no-store" : "public, max-age=3600" },

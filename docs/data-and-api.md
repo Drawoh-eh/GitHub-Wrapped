@@ -75,7 +75,12 @@ PNGs use Next.js [`ImageResponse`](https://nextjs.org/docs/app/api-reference/fun
 | `lib/input.ts` | Username and year validation. |
 | `lib/presentation.ts` | English copy, themes, builder titles. |
 | `lib/links.ts` | Canonical public share URLs. |
-| `lib/card-assets.ts` | Local font loading and avatar fetching. |
-| `tests/` | Metric, validation, and sharing tests. |
+| `lib/card-assets.ts` | Nickname font selection and avatar fetching. |
+| `lib/image-fonts.ts` | Four shared image fonts; social images omit nickname subsets. |
+| `lib/nickname-fonts.ts` | Generated literal paths for the two nickname font weights. |
+| `lib/calendar.ts` | UTC month alignment and calendar keyboard navigation. |
+| `tests/` | Metric, validation, sharing, and calendar tests. |
+
+After updating `@fontsource/noto-sans-sc`, run `node scripts/generate-font-manifest.mjs` and commit the regenerated manifest. It preserves non-Latin display names while keeping unused font weights and WOFF2 files out of image functions. Fonts are read once per running process; only the subsets needed by each nickname are loaded.
 
 Potential next steps: story-style slides, more themes, and shared caching. Private recaps and coding-hour estimates are not implemented.
