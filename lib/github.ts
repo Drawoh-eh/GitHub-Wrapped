@@ -31,7 +31,7 @@ function buildQuery(year: number, to: string) {
       annual: contributionsCollection(from: $from, to: $to) {
         totalCommitContributions
         totalRepositoriesWithContributedCommits
-        contributionCalendar { weeks { contributionDays { date contributionCount } } }
+        contributionCalendar { weeks { contributionDays { date contributionCount contributionLevel } } }
         commitContributionsByRepository(maxRepositories: 100) {
           contributions(first: 1) { totalCount }
           repository {
@@ -81,20 +81,21 @@ async function fetchStats(username: string, year: number) {
   }
   if (!result.data?.user) throw new WrappedError("That GitHub account could not be found. Check the username.", 404);
   const user = result.data.user, annual = user.annual;
-  return calculateStats({
+  return { ...calculateStats({
     displayName: user.name, avatarUrl: user.avatarUrl,
     username: user.login, year, through: input.to.slice(0, 10),
     commits: annual.totalCommitContributions, repositories: annual.totalRepositoriesWithContributedCommits,
     days: annual.contributionCalendar.weeks.flatMap(w => w.contributionDays),
     monthlyCommits: Array.from({ length: 12 }, (_, i) => user[`month${i}`]?.totalCommitContributions ?? 0),
     repositoryLanguages: annual.commitContributionsByRepository,
-  });
+  }), fetchedAt: new Date().toISOString() };
 }
 
 export async function getWrapped(username: string, year: number, demo = false) {
   const input = parseInput(username, year);
   if (demo) return getDemoStats(input.year);
-  const key = `${input.username.toLowerCase()}:${year}`;
+  // A new UTC date must not reuse yesterday's year-to-date cutoff.
+  const key = `${input.username.toLowerCase()}:${year}:${input.to.slice(0, 10)}`;
   const hit = cache.get(key);
   if (hit && hit.until > Date.now()) return hit.stats;
   const running = pending.get(key);
@@ -102,7 +103,8 @@ export async function getWrapped(username: string, year: number, demo = false) {
   const promise = fetchStats(input.username, year).then(stats => {
     cache.delete(key);
     if (cache.size >= 100) cache.delete(cache.keys().next().value!);
-    cache.set(key, { until: Date.now() + 3_600_000, stats });
+    const ttl = year === new Date().getUTCFullYear() ? 300_000 : 3_600_000;
+    cache.set(key, { until: Date.now() + ttl, stats });
     return stats;
   }).finally(() => pending.delete(key));
   pending.set(key, promise);

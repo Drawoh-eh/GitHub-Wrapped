@@ -2,7 +2,7 @@
 
 import { useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import type { ContributionDay } from "@/lib/types";
-import { calendarLayout, calendarMove, dayDescription } from "@/lib/calendar";
+import { calendarLayout, calendarMove, contributionIntensity, dayDescription } from "@/lib/calendar";
 
 export function ContributionCalendar({ days }: { days: ContributionDay[] }) {
   const { padding, weeks, months } = calendarLayout(days);
@@ -28,7 +28,7 @@ export function ContributionCalendar({ days }: { days: ContributionDay[] }) {
             aria-label={dayDescription(day)} aria-pressed={selected === index}
             onClick={() => { setSelected(index); setActive(index); }} onFocus={() => { setActive(index); setPreview(index); }}
             onBlur={() => setPreview(null)} onMouseEnter={() => setPreview(index)} onKeyDown={event => navigate(event, index)}
-            className={`calendar-cell level-${day.contributionCount === 0 ? 0 : day.contributionCount < 3 ? 1 : day.contributionCount < 6 ? 2 : day.contributionCount < 10 ? 3 : 4}`} />)}
+            className={`calendar-cell level-${contributionIntensity(day)}`} />)}
         </div>
       </div>
     </div>

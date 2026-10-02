@@ -1,5 +1,13 @@
 import type { ContributionDay } from "./types";
 
+const LEVELS = { NONE: 0, FIRST_QUARTILE: 1, SECOND_QUARTILE: 2, THIRD_QUARTILE: 3, FOURTH_QUARTILE: 4 } as const;
+export function contributionIntensity(day: ContributionDay) {
+  if (day.contributionLevel) return LEVELS[day.contributionLevel];
+  // Generated samples have no GitHub-provided levels.
+  const count = day.contributionCount;
+  return count === 0 ? 0 : count < 3 ? 1 : count < 6 ? 2 : count < 10 ? 3 : 4;
+}
+
 export function calendarLayout(days: ContributionDay[]) {
   const padding = days.length ? new Date(`${days[0].date}T00:00:00Z`).getUTCDay() : 0;
   const weeks = Math.max(1, Math.ceil((padding + days.length) / 7));

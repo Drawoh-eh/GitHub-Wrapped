@@ -10,7 +10,7 @@
 | Repositories | `totalRepositoriesWithContributedCommits`, not all owned repositories or newly created repositories. |
 | Monthly commits | A separate `totalCommitContributions` query for each elapsed calendar month. No daily-record pagination truncation. Earliest month wins ties. |
 | Language mix | Sum current language bytes in public repositories with commit contributions during the selected year. Maximum 100 repositories and 100 languages each; incomplete coverage is labeled. Not code personally written that year or a historical language snapshot. |
-| Contributions / active days | All types in GitHub’s contribution calendar, including commits, issues, PRs, and reviews. |
+| Contributions / active days | All types in GitHub’s contribution calendar, including commits, issues, PRs, and reviews. Counts and relative intensity levels come directly from GitHub; colors do not use fixed count thresholds. |
 | Longest streak | Consecutive calendar dates with any contribution, within the selected year. |
 | Busiest day | Date with the most calendar contributions, not the most commits. Earliest date wins ties. |
 | Top public repository | Highest `commitContributionsByRepository.contributions.totalCount` among returned public repositories (maximum 100). Repository name breaks ties. Incomplete coverage is labeled. |
@@ -59,7 +59,9 @@ Image copying uses the browser’s PNG clipboard API in a secure context. Unsupp
 
 ## Runtime & caching
 
-Real responses are cached in memory for one hour, with at most 100 entries. Identical concurrent queries are coalesced. New GitHub fetches are capped at 30 per minute **per process**; these controls are not distributed across serverless instances. A larger public service needs shared caching and distributed request limits.
+Current-year responses are cached in memory for five minutes; past years for one hour, with at most 100 entries. Cache keys include the UTC cutoff date, preventing reuse of yesterday's year-to-date response. The calendar displays the account, year, and fetch time. Identical concurrent queries are coalesced. New GitHub fetches are capped at 30 per minute **per process**; these controls are not distributed across serverless instances. A larger public service needs shared caching and distributed request limits.
+
+Homepage and demo charts use generated illustrative data, not Octocat's actual GitHub activity. Each chart is labeled **SAMPLE DATA**. Only a successful non-demo lookup displays real account activity. On lookup failure, an error is shown and the preview remains explicitly labeled as sample data.
 
 PNGs use Next.js [`ImageResponse`](https://nextjs.org/docs/app/api-reference/functions/image-response). Fonts are bundled with Fontsource; required Noto Sans SC subsets provide fallback glyphs for profile display names. Avatars are fetched only from `avatars.githubusercontent.com`, with a three-second timeout, accepted image types, a 250 KB size check, and a monogram fallback.
 

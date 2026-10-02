@@ -91,6 +91,10 @@ select { width:100%; color:var(--text); background:var(--bg); border:1px solid #
 .calendar-panel { margin-top:20px; }
 .calendar-heading { display:flex; justify-content:space-between; gap:15px; margin-bottom:16px; }
 .calendar-heading > span { font-size:10px; color:var(--muted); }
+.chart-title { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.sample-badge { font:8px monospace; letter-spacing:.5px; border:1px solid #c8ff6260; border-radius:4px; padding:4px 6px; color:var(--lime); white-space:nowrap; }
+.calendar-source { margin:-4px 0 14px; font-size:11px; line-height:1.6; color:var(--muted); overflow-wrap:anywhere; }
+.calendar-source a { color:var(--lime); }
 .calendar-scroll { overflow-x:auto; padding:3px; margin:-3px; }
 .calendar-months,.contribution-calendar { display:grid; grid-template-columns:repeat(var(--calendar-weeks),minmax(8px,1fr)); gap:4px; }
 .calendar-months { margin-bottom:8px; font:10px monospace; color:var(--muted); }

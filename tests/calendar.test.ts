@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { calendarLayout, calendarMove, dayDescription } from "../lib/calendar";
+import { calendarLayout, calendarMove, contributionIntensity, dayDescription } from "../lib/calendar";
 import type { ContributionDay } from "../lib/types";
 
 function days(year: number, length: number): ContributionDay[] {
@@ -28,4 +28,10 @@ test("keyboard navigation follows week columns without crossing Sunday/Saturday 
 test("day descriptions retain UTC dates and singular counts", () => {
   assert.equal(dayDescription({ date: "2024-02-29", contributionCount: 1 }), "Feb 29, 2024 · 1 contribution");
   assert.equal(dayDescription({ date: "2025-01-01", contributionCount: 0 }), "Jan 1, 2025 · 0 contributions");
+});
+test("live heatmaps use GitHub's relative intensity instead of fixed count thresholds", () => {
+  assert.equal(contributionIntensity({ date: "2026-01-24", contributionCount: 11, contributionLevel: "SECOND_QUARTILE" }), 2);
+  assert.equal(contributionIntensity({ date: "2026-01-25", contributionCount: 1, contributionLevel: "FOURTH_QUARTILE" }), 4);
+  assert.equal(contributionIntensity({ date: "2026-01-26", contributionCount: 0, contributionLevel: "NONE" }), 0);
+  assert.equal(contributionIntensity({ date: "2026-01-27", contributionCount: 11 }), 4);
 });
