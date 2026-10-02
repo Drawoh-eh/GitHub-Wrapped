@@ -101,14 +101,14 @@ export function WrappedExperience({ initialStats, initialUsername = "", initialE
         </section>
         <section className="hero-preview" aria-label={c.preview}><div className="preview-caption"><span>{stats.isDemo ? c.demoCard : `@${stats.username.toUpperCase()} · ${c.recap}`}</span><span>1080 × 1350</span></div><div className="card-shadow"><CardPreview stats={stats} theme={theme} /></div><div className="preview-footnote"><span className="tiny-spark">✳</span> {c.cardFoot}</div></section>
       </div>
-      {isResult && <section className="data-section" aria-label={c.calendarNote}>
+      <section className="data-section" aria-label={c.calendarNote}>
         <div className="section-title"><div className="eyebrow">{c.closer}</div><h2>{c.adds}</h2><p>{stats.isDemo ? c.sample : `${stats.year === currentYear ? c.ytd : c.full} · ${c.through} ${stats.through} · ${c.dates}`}</p></div>
         <div className="insight-grid"><div><span>{c.total}</span><strong>{stats.contributions.toLocaleString("en-US")}</strong><small>{c.allTypes}</small></div><div><span>{c.active}</span><strong>{stats.activeDays}</strong><small>{c.activeNote}</small></div><div><span>{c.streak}</span><strong>{stats.longestStreak}<em> {c.days}</em></strong><small>{c.streakNote}</small></div><div><span>{c.busiest}</span><strong className="date-stat">{stats.busiestDay?.date.slice(5) ?? "—"}</strong><small>{stats.busiestDay ? `${stats.busiestDay.contributionCount} ${c.contributions} · MM-DD` : c.next}</small></div></div>
         <div className="personalized-panel"><div><span>{c.titleLabel}</span><h3>{personaText(stats)}</h3><p>{c.titleNote}</p></div><div><span>{c.topRepo}</span><h3>{stats.topRepository ? <a href={`https://github.com/${stats.topRepository.name}`} target="_blank" rel="noreferrer">{stats.topRepository.name} ↗</a> : c.noRepo}</h3><p>{stats.topRepository ? `${stats.topRepository.commits.toLocaleString("en-US")} ${c.commits} · ` : ""}{c.topRepoNote}{stats.topRepositoryIncomplete ? ` ${c.partialShort}` : ""}</p></div></div>
         <div className="activity-panels"><div className="month-panel"><h3>{c.monthTitle}</h3><p>{c.monthNote}</p><MonthlyChart key={`${stats.username}-${stats.year}`} months={stats.months} bestMonth={stats.mostProductiveMonth?.name} /></div>
         <div className="language-panel"><h3>{c.languageTitle}</h3><p>{c.languageNote}</p>{stats.languages.length ? stats.languages.slice(0, 5).map(l => <div className="language-row" key={l.name}><i style={{ background: l.color }} /><span>{l.name}</span><b>{l.percentage.toFixed(1)}%</b></div>) : <div className="empty-data">{c.languageEmpty}</div>}{stats.languagesIncomplete && <small className="coverage-note">{c.partial}</small>}</div></div>
         <div className="calendar-panel"><div className="calendar-heading"><h3>{c.calendar}</h3><span>{c.calendarNote}</span></div><ContributionCalendar key={`${stats.username}-${stats.year}`} days={stats.days} /></div>
-      </section>}
+      </section>
       <section className="method-section">{c.methods.map((title, i) => <div key={i}><span className="method-number">0{i + 1} / {c.methodLabels[i]}</span><h3>{title}</h3><p>{c.methodTexts[i]}</p></div>)}</section>
     </main>
     <footer className="site-footer"><span>{c.footer}</span><a href={REPOSITORY} target="_blank" rel="noreferrer">{c.source} ↗</a><span>{c.unofficial}</span></footer>
