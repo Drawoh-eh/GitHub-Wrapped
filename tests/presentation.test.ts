@@ -22,14 +22,14 @@ test("fun titles have explicit thresholds and prioritize a seven-day streak", ()
   assert.equal(calculateStats({ ...raw, repositories: 5 }).persona, "explorer");
   const stats = calculateStats({ ...raw, repositories: 5, days: Array.from({ length: 7 }, (_, i) => ({ date: `2024-01-0${i + 1}`, contributionCount: 1 })) });
   assert.equal(stats.persona, "steady");
-  assert.equal(personaText(stats, "zh"), "持续创造者");
+  assert.equal(personaText(stats), "Steady Builder");
 });
-test("share links use the public origin and preserve year, theme, language and demo mode", () => {
+test("share links use the public origin and preserve year, theme and demo mode", () => {
   const stats = getDemoStats(2024);
-  const url = new URL(shareUrl(stats, "violet", "zh"));
+  const url = new URL(shareUrl(stats, "violet"));
   assert.equal(url.origin, SITE_URL);
   assert.equal(url.pathname, "/wrapped/octocat");
-  assert.deepEqual(Object.fromEntries(url.searchParams), { year: "2024", theme: "violet", lang: "zh", demo: "1" });
-  assert.equal(new URL(SITE_URL + recapPath({ username: "a", year: 2024, isDemo: false }, "mono", "en")).searchParams.has("demo"), false);
-  assert.deepEqual(parsePresentation("bad", "bad"), { theme: "lime", lang: "en" });
+  assert.deepEqual(Object.fromEntries(url.searchParams), { year: "2024", theme: "violet", demo: "1" });
+  assert.equal(new URL(SITE_URL + recapPath({ username: "a", year: 2024, isDemo: false }, "mono")).searchParams.has("demo"), false);
+  assert.deepEqual(parsePresentation("bad"), { theme: "lime" });
 });

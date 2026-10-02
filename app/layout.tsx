@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "@fontsource/arimo/400.css";
+import "@fontsource/arimo/700.css";
+import "@fontsource/libre-baskerville/latin-400-italic.css";
 import "@fontsource/noto-sans-sc/400.css";
 import "@fontsource/noto-sans-sc/700.css";
 

@@ -1,24 +1,57 @@
-# GitHub Wrapped
+<div align="center">
+  <img src="public/icon.svg" width="72" alt="GitHub Wrapped logo" />
+  <h1>GitHub Wrapped</h1>
+  <p><strong>Your year in code. One card worth sharing.</strong></p>
+  <p>A yearly GitHub recap with your commits, languages, streaks, and favorite public project.</p>
+  <p>
+    <a href="https://git-hub-wrapped-chi.vercel.app"><strong>Make your Wrapped</strong></a> ·
+    <a href="https://git-hub-wrapped-chi.vercel.app/wrapped/octocat?year=2025&demo=1">Try the demo</a> ·
+    <a href="README.zh-CN.md">简体中文</a> ·
+    <a href="https://github.com/Drawoh-eh/GitHub-Wrapped/issues">Report an issue</a>
+  </p>
+  <p>
+    <a href="LICENSE"><img src="https://img.shields.io/github/license/Drawoh-eh/GitHub-Wrapped?style=flat-square&color=c8ff62" alt="MIT license" /></a>
+    <a href="https://github.com/Drawoh-eh/GitHub-Wrapped/stargazers"><img src="https://img.shields.io/github/stars/Drawoh-eh/GitHub-Wrapped?style=flat-square&color=c8ff62" alt="GitHub stars" /></a>
+  </p>
+</div>
 
-**Turn your GitHub year into a story.**
+![GitHub Wrapped interface with a yearly recap and downloadable card](docs/screenshot.png)
 
-The commits. The languages. The days you kept going. Generate a yearly recap and download a **1080 × 1350 PNG** to share.
+## Make yours
 
-![GitHub Wrapped recap interface](docs/screenshot.png)
+1. Open [GitHub Wrapped](https://git-hub-wrapped-chi.vercel.app), enter your GitHub username, and pick a year.
+2. Choose a card theme: **Lime**, **Violet**, or **Mono**.
+3. Download your **1080 × 1350 PNG**, or share a link to the full recap.
 
-[View the downloadable sample card](docs/demo-card.png)
+No sign-up or installation needed to use the hosted site. Want a preview first? [The demo](https://git-hub-wrapped-chi.vercel.app/wrapped/octocat?year=2025&demo=1) uses clearly labeled sample data.
 
-## What v0.2 does
+## Three ways to tell your story
 
-- Enter a GitHub username and choose a year from 2008 to the current year.
-- See commit contributions, repositories committed to, top languages, and most productive month.
-- Explore monthly commits, the contribution calendar, active days, busiest day, and longest contribution streak.
-- Download a PNG or share a public production link that preserves the year, theme, and language.
-- Choose Lime, Violet, or Mono card themes and switch between English and Chinese.
-- See your GitHub avatar and display name, a rule-based builder title, and your most-contributed public repository.
-- Use the same card composition for the responsive preview and the PNG export.
-- Try a clearly labeled demo without a GitHub token.
-- No login, database, or paid AI API required.
+<table>
+  <tr>
+    <td align="center"><strong>Lime</strong></td>
+    <td align="center"><strong>Violet</strong></td>
+    <td align="center"><strong>Mono</strong></td>
+  </tr>
+  <tr>
+    <td><a href="docs/demo-card.png"><img src="docs/demo-card.png" width="260" alt="Lime sample recap card" /></a></td>
+    <td><a href="docs/demo-violet.png"><img src="docs/demo-violet.png" width="260" alt="Violet sample recap card" /></a></td>
+    <td><a href="docs/demo-mono.png"><img src="docs/demo-mono.png" width="260" alt="Mono sample recap card" /></a></td>
+  </tr>
+</table>
+
+All three cards show **sample data**. Click a card to see the full-size PNG.
+
+## What’s inside
+
+- **Your year at a glance** — commit contributions, contributed repositories, longest streak, and busiest month.
+- **A personal card** — your avatar, display name, top public repository, and a playful builder title.
+- **The fuller picture** — monthly activity, a contribution calendar, active days, and repository language mix.
+- **A shareable result** — matching page and PNG layouts, plus links that keep your year and theme.
+- **Public data, server-side access** — visitors never enter a token; self-hosters configure one on the server.
+- **A small, inspectable stack** — Next.js, React, TypeScript, and GitHub’s GraphQL API. No database or AI API required.
+
+> Language percentages describe current code bytes in public repositories you committed to, not code you personally wrote that year. Commit counts follow GitHub’s contribution rules. [See the data definitions.](docs/data-and-api.md#metric-definitions)
 
 ## Run locally
 
@@ -32,77 +65,51 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open [localhost:3000](http://localhost:3000). The demo works immediately. To enable real recaps, add a GitHub token to `.env.local` and restart the dev server:
+Open [localhost:3000](http://localhost:3000). **The demo works without a token.**
+
+To fetch real profiles, add a public-data GitHub token to `.env.local`, then restart the server:
 
 ```env
 GITHUB_TOKEN=your_server_only_token
 ```
 
-For public-data hosting, prefer a **fine-grained personal access token** with **Public repositories** selected and no additional account or repository permissions. GitHub grants fine-grained tokens read access to public repositories. If you use a classic token instead, select only `public_repo`, as required by GitHub’s GraphQL documentation. Never commit the token or prefix it with `NEXT_PUBLIC_`. The connected GitHub app used to edit this repository does **not** automatically give the deployed application an API token. Broad classic tokens with `repo`, `user`, or `read:user` scope are rejected. If using a fine-grained token, grant only the minimum public access; do not grant private-repository or private-user permissions.
+Prefer a [fine-grained token](https://github.com/settings/personal-access-tokens/new) with **Public repositories** and no additional permissions. For a classic token, use only `public_repo`. Broad classic scopes (`repo`, `user`, `read:user`) are rejected. Keep the token server-side; never commit it or use a `NEXT_PUBLIC_` prefix. [Token setup details](docs/data-and-api.md#token-setup).
 
-Create a fine-grained token from [GitHub token settings](https://github.com/settings/personal-access-tokens/new). See [GraphQL authentication requirements](https://docs.github.com/en/graphql/guides/forming-calls-with-graphql). Follow [GitHub's token guidance](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+## Deploy your own
 
-## Deploy to Vercel
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FDrawoh-eh%2FGitHub-Wrapped&env=GITHUB_TOKEN)
 
-1. Import `Drawoh-eh/GitHub-Wrapped` into Vercel and keep its Next.js defaults.
-2. Add the server environment variable `GITHUB_TOKEN` for the environments where you want real recaps.
-3. Deploy. If you add or change the token after deployment, redeploy.
+1. Deploy this repository with Vercel’s Next.js defaults and set `GITHUB_TOKEN`.
+2. Set `SITE_URL` in [`lib/links.ts`](lib/links.ts) to your public production domain so share links point to your instance.
+3. Redeploy after changing the domain or token. Ensure your public production domain is accessible to visitors.
 
-You can deploy without a token to preview the app and use the demo; real requests show a configuration message. This app needs a server runtime, so it cannot be deployed as a plain GitHub Pages static export.
+A GitHub connector used to edit the repository does not provide a token to the deployed app. A server runtime is required; GitHub Pages static export is not supported.
 
-## Metric definitions
+## FAQ
 
-| Metric | Definition |
-| --- | --- |
-| Commit contributions | `ContributionsCollection.totalCommitContributions`; GitHub's contribution rules apply. This is not every commit on every branch. |
-| Repositories | `totalRepositoriesWithContributedCommits`; not all owned repos or newly created repos. |
-| Monthly commits | A separate `totalCommitContributions` query for each elapsed calendar month. No daily-record pagination truncation. Earliest month wins ties. |
-| Language mix | Sum current language bytes in public repositories with commit contributions during the selected year. Up to 100 repositories and 100 languages each; incomplete coverage is labeled. It is not a measure of code personally written that year or a historical language snapshot. |
-| Contributions / active days | All types in GitHub's contribution calendar, including commits, issues, PRs and reviews. |
-| Longest streak | Consecutive calendar dates with any contribution, within the selected year. |
-| Busiest day | Date with most calendar contributions, not most commits. Earliest date wins ties. |
-| Top public repository | Highest `commitContributionsByRepository.contributions.totalCount` among the returned public repositories (up to 100). Repository name breaks ties. Missing coverage is labeled. |
-| Builder title | In priority order: streak ≥ 7 days → Steady Builder; ≥ 5 contributed repositories → Project Explorer; any commits → Code Builder; otherwise A New Chapter. These are fun labels, not productivity scores. |
-| Current year | Year to date, through the query date. Future months remain zero. |
+**Why are some commits missing?**
 
-Dates follow GitHub's calendar buckets. We do not infer coding hours or a timezone from daily aggregates. Publicly shared private-contribution counts may affect the calendar as GitHub exposes them; the application never returns private repository names. The token must be configured for public data only.
+These are GitHub *commit contributions*, not every commit on every branch. See [GitHub’s contribution rules](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/troubleshooting-missing-contributions).
 
-More: [GitHub contribution rules](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/troubleshooting-missing-contributions), [GraphQL user reference](https://docs.github.com/en/graphql/reference/users).
+**Does the current year include future months?**
 
-## Architecture
+It is a year-to-date recap. The card shows its cutoff date; future months have zero commits.
 
-```text
-app/                        Home, shareable recap route, JSON and PNG APIs
-components/                 Interactive form, share actions, recap card
-lib/github.ts               Server-only GitHub fetching, cache and error handling
-lib/stats.ts                Pure calculations
-lib/demo.ts                 Clearly marked, deterministic sample data
-lib/input.ts                Username and year validation
-lib/presentation.ts         Themes, localized copy, presentation validation
-lib/links.ts                Canonical public sharing origin
-lib/card-assets.ts          Bundled font subsets and bounded avatar fetching
-tests/                      Metric and input tests
-```
+**Why does language usage look different from what I wrote?**
 
-Next.js App Router + TypeScript + React + CSS. PNGs use [`ImageResponse`](https://nextjs.org/docs/app/api-reference/functions/image-response). Fonts are bundled locally using [Noto Sans SC](https://fonts.google.com/noto/specimen/Noto+Sans+SC) via Fontsource (SIL Open Font License). PNG rendering loads only the required Unicode subsets. Avatars are fetched only from `avatars.githubusercontent.com`, with a three-second timeout and a monogram fallback.
+It is based on current repository code bytes, with a maximum of 100 repositories and 100 languages per repository. Incomplete coverage is labeled.
 
-### API
+**What does “Live recaps are not configured yet” mean?**
 
-```text
-GET /api/wrapped?username=Drawoh-eh&year=2026
-GET /api/card?username=Drawoh-eh&year=2026&download=1
-GET /wrapped/Drawoh-eh?year=2026
-```
+Set `GITHUB_TOKEN` in the server environment and restart or redeploy. The demo remains available without it.
 
-Append `&theme=lime|violet|mono&lang=en|zh` to PNG and recap URLs. Invalid presentation options fall back to Lime and English. The homepage also accepts these options.
+**Can I show the card on my GitHub profile?**
 
-Share links use `SITE_URL` in `lib/links.ts`, currently [the public production site](https://git-hub-wrapped-chi.vercel.app). Update this constant if moving to another production domain; preview deployment URLs are never used in share links.
+Yes. Download the PNG, upload it to your profile repository, and embed that file with Markdown. It stays a snapshot of the year you chose.
 
-Append `&demo=1` to use sample data. Demo stats always belong to the sample `octocat` profile and are explicitly labeled in the UI and downloaded image.
+## Contribute
 
-Successful real responses are cached in memory for an hour, with up to 100 entries; identical concurrent requests are coalesced. New GitHub fetches are capped at 30 per minute **per process**. These are MVP controls, not shared quotas across serverless instances. For a high-traffic public launch, add a shared cache and distributed rate limiting/WAF rules. Respect GitHub's API limits. Card errors are JSON; downloaded successes are PNG.
-
-## Validation
+Found a bug or have a theme idea? [Open an issue](https://github.com/Drawoh-eh/GitHub-Wrapped/issues) with a reproducible example, or send a focused pull request.
 
 ```bash
 npm test
@@ -110,19 +117,12 @@ npm run typecheck
 npm run build
 ```
 
-## Contributing
+Keep fetching separate from calculations, and update the [data documentation](docs/data-and-api.md) when metric definitions change. Please never include tokens in issues or pull requests.
 
-Bug reports and small pull requests are welcome. Include a reproducible example, keep data-fetching logic separate from calculations, and document any change to metric definitions. Never attach a personal access token to an issue or PR.
+[Data & API reference](docs/data-and-api.md)
 
-## Roadmap
+## Credits & license
 
-- [x] Three card themes
-- [x] English and Chinese UI and PNGs
-- [x] Canonical public share links
-- [x] Avatar, builder title and top public repository
-- [ ] Story-style slides
-- [ ] OAuth with opt-in private recaps
-- [ ] Timezone-aware coding hours from paginated individual commits
-- [ ] Shared caching and rate limits for larger deployments
+README organization draws inspiration from [GitHub Readme Stats](https://github.com/anuraghazra/github-readme-stats) and [GitHub Readme Streak Stats](https://github.com/DenverCoder1/github-readme-streak-stats). The application uses GitHub’s GraphQL API and Next.js `ImageResponse`. Bundled fonts are Arimo, Libre Baskerville, and Noto Sans SC via Fontsource, under their SIL Open Font Licenses.
 
-MIT licensed. Unofficial project; not affiliated with GitHub or Spotify.
+[MIT](LICENSE). An independent project, not affiliated with GitHub or Spotify.

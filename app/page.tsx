@@ -1,8 +1,8 @@
 import { WrappedExperience } from "@/components/WrappedExperience";
 import { parsePresentation } from "@/lib/presentation";
 export const dynamic = "force-dynamic";
-export default async function Home({ searchParams }: { searchParams: Promise<{ theme?: string; lang?: string }> }) {
+export default async function Home({ searchParams }: { searchParams: Promise<{ theme?: string }> }) {
   const query = await searchParams;
-  const { theme, lang } = parsePresentation(query.theme, query.lang);
-  return <WrappedExperience initialTheme={theme} initialLang={lang} />;
+  const { theme } = parsePresentation(query.theme);
+  return <WrappedExperience initialTheme={theme} />;
 }
