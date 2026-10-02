@@ -1,6 +1,6 @@
 import "server-only";
 import { parseInput, WrappedError } from "./input";
-import { calculateStats } from "./stats";
+import { calculateStats, contributionCutoff } from "./stats";
 import { getDemoStats } from "./demo";
 import type { ContributionDay, RepositoryLanguages, WrappedStats } from "./types";
 
@@ -21,7 +21,8 @@ function buildQuery(year: number, to: string) {
     const from = new Date(Date.UTC(year, i, 1)).toISOString();
     if (from > to) return "";
     const last = new Date(Date.UTC(year, i + 1, 1) - 1000).toISOString();
-    return `month${i}: contributionsCollection(from: "${from}", to: "${last < to ? last : to}") { totalCommitContributions }`;
+    // Query the full elapsed month so date buckets ahead of UTC are retained.
+    return `month${i}: contributionsCollection(from: "${from}", to: "${last}") { totalCommitContributions }`;
   }).join("\n");
   return `query Wrapped($login: String!, $from: DateTime!, $to: DateTime!) {
     user(login: $login) {
@@ -61,7 +62,7 @@ async function fetchStats(username: string, year: number) {
     response = await fetch("https://api.github.com/graphql", {
       method: "POST",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", "User-Agent": "GitHub-Wrapped" },
-      body: JSON.stringify({ query: buildQuery(year, input.to), variables: { login: input.username, from: input.from, to: input.to } }),
+      body: JSON.stringify({ query: buildQuery(year, input.to), variables: { login: input.username, from: input.from, to: `${year}-12-31T23:59:59Z` } }),
       cache: "no-store", signal: AbortSignal.timeout(25_000),
     });
   } catch { throw new WrappedError("GitHub took too long to respond. Please try again.", 502); }
@@ -81,11 +82,12 @@ async function fetchStats(username: string, year: number) {
   }
   if (!result.data?.user) throw new WrappedError("That GitHub account could not be found. Check the username.", 404);
   const user = result.data.user, annual = user.annual;
+  const days = annual.contributionCalendar.weeks.flatMap(w => w.contributionDays);
   return { ...calculateStats({
     displayName: user.name, avatarUrl: user.avatarUrl,
-    username: user.login, year, through: input.to.slice(0, 10),
+    username: user.login, year, through: contributionCutoff(days, year, input.to.slice(0, 10)),
     commits: annual.totalCommitContributions, repositories: annual.totalRepositoriesWithContributedCommits,
-    days: annual.contributionCalendar.weeks.flatMap(w => w.contributionDays),
+    days,
     monthlyCommits: Array.from({ length: 12 }, (_, i) => user[`month${i}`]?.totalCommitContributions ?? 0),
     repositoryLanguages: annual.commitContributionsByRepository,
   }), fetchedAt: new Date().toISOString() };

@@ -16,6 +16,7 @@ globalThis.fetch = async (_url, options) => {
   calls++;
   const body = JSON.parse(String(options?.body));
   assert.match(body.query, /contributionDays \{ date contributionCount contributionLevel \}/);
+  assert.equal(body.variables.to, `${body.variables.from.slice(0, 4)}-12-31T23:59:59Z`);
   const day = new RealDate(now).toISOString().slice(0, 10);
   return Response.json({ data: { user: { login: "test", name: "Test", avatarUrl: null, annual: {
     totalCommitContributions: 0, totalRepositoriesWithContributedCommits: 0,

@@ -2,6 +2,12 @@ import type { ContributionDay, RawWrappedData, RepositoryLanguages, WrappedStats
 
 export const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
+export function contributionCutoff(days: ContributionDay[], year: number, utcThrough: string) {
+  // GitHub buckets commits by their recorded date; a contribution can already
+  // belong to the next date while UTC is still on the previous date.
+  return days.reduce((through, day) => day.date.startsWith(`${year}-`) && day.contributionCount > 0 && day.date > through ? day.date : through, utcThrough);
+}
+
 export function calculateLongestStreak(days: ContributionDay[]) {
   let longest = 0, current = 0, previous = "";
   for (const day of [...days].sort((a, b) => a.date.localeCompare(b.date))) {

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { calculateLanguageStats, calculateLongestStreak, calculateStats } from "../lib/stats";
+import { calculateLanguageStats, calculateLongestStreak, calculateStats, contributionCutoff } from "../lib/stats";
 import { parseInput } from "../lib/input";
 import { getDemoStats } from "../lib/demo";
 import type { RawWrappedData, RepositoryLanguages } from "../lib/types";
@@ -62,4 +62,18 @@ test("demo is clearly marked and internally consistent", () => {
   assert.equal(demo.commits, demo.months.reduce((sum, m) => sum + m.count, 0));
   assert.equal(demo.commits, demo.contributions);
   assert.equal(demo.languagesIncomplete, false);
+});
+test("GitHub contribution dates ahead of UTC are retained without including future empty days", () => {
+  const days = [
+    { date: "2026-10-02", contributionCount: 7 },
+    { date: "2026-10-03", contributionCount: 23 },
+    { date: "2026-10-04", contributionCount: 0 },
+    { date: "2027-01-01", contributionCount: 99 },
+  ];
+  const through = contributionCutoff(days, 2026, "2026-10-02");
+  assert.equal(through, "2026-10-03");
+  const stats = calculateStats({ username: "test", year: 2026, through, days, commits: 0, repositories: 0, monthlyCommits: [], repositoryLanguages: [] });
+  assert.equal(stats.contributions, 30);
+  assert.equal(stats.days.at(-1)?.date, "2026-10-03");
+  assert.equal(contributionCutoff([{ date: "2026-12-31", contributionCount: 0 }], 2026, "2026-10-02"), "2026-10-02");
 });
