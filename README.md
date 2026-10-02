@@ -35,9 +35,9 @@ Open [localhost:3000](http://localhost:3000). The demo works immediately. To ena
 GITHUB_TOKEN=your_server_only_token
 ```
 
-For public-data hosting, use a **classic personal access token with no scopes**. Never commit the token or prefix it with `NEXT_PUBLIC_`. The connected GitHub app used to edit this repository does **not** automatically give the deployed application an API token. Broad classic tokens with `repo`, `user`, or `read:user` scope are rejected. If using a fine-grained token, grant only the minimum public access; do not grant private-repository or private-user permissions.
+For public-data hosting, prefer a **fine-grained personal access token** with **Public repositories** selected and no additional account or repository permissions. GitHub grants fine-grained tokens read access to public repositories. If you use a classic token instead, select only `public_repo`, as required by GitHub’s GraphQL documentation. Never commit the token or prefix it with `NEXT_PUBLIC_`. The connected GitHub app used to edit this repository does **not** automatically give the deployed application an API token. Broad classic tokens with `repo`, `user`, or `read:user` scope are rejected. If using a fine-grained token, grant only the minimum public access; do not grant private-repository or private-user permissions.
 
-Create a token from [GitHub token settings](https://github.com/settings/tokens). Follow [GitHub's token guidance](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+Create a fine-grained token from [GitHub token settings](https://github.com/settings/personal-access-tokens/new). See [GraphQL authentication requirements](https://docs.github.com/en/graphql/guides/forming-calls-with-graphql). Follow [GitHub's token guidance](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
 
 ## Deploy to Vercel
 
