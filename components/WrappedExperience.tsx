@@ -80,8 +80,8 @@ export function WrappedExperience({ initialStats, initialUsername = "", initialE
       else { await navigator.clipboard.writeText(url); setNotice(c.copied); }
     } catch (e) { if (!(e instanceof Error && e.name === "AbortError")) setNotice(`${c.shareLink} ${url}`); }
   }
-  return <div className="site-shell" lang="en">
-    <header className="site-header"><a className="wordmark" href={`/?theme=${theme}`}><span className="brand-mark">&lt;/&gt;</span>github<span className="wordmark-light">wrapped</span><span className="version">v0.2</span></a><div className="header-actions"><a className="repo-link" href={REPOSITORY} target="_blank" rel="noreferrer"><GitHubIcon /><span>{c.star}</span><span className="star">☆</span></a></div></header>
+  return <div className={`site-shell ${isResult ? "is-result" : "is-home"}`} lang="en">
+    <header className="site-header"><a className="wordmark" href={`/?theme=${theme}`}><span className="brand-mark">&lt;/&gt;</span>github<span className="wordmark-light">wrapped</span></a><div className="header-actions"><a className="repo-link" href={REPOSITORY} target="_blank" rel="noreferrer" aria-label={c.star}><GitHubIcon /><span>Star</span></a></div></header>
     <main>
       <div className="hero-layout">
         <section className="hero-copy">
@@ -89,17 +89,15 @@ export function WrappedExperience({ initialStats, initialUsername = "", initialE
           <h1>{isResult ? c.result1 : c.title1}<br /><span>{isResult ? c.result2 : c.title2}</span></h1>
           <p className="hero-description">{c.intro}</p>
           <form className="username-form" onSubmit={generate} aria-busy={busy}>
-            <div className="form-heading"><span>{c.form}</span><span>{c.noSignup}</span></div>
             <div className="form-fields"><div className="username-field"><label htmlFor="username">{c.username}</label><div className="input-wrap"><span>@</span><input id="username" name="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="Drawoh-eh" required maxLength={39} autoCapitalize="none" autoCorrect="off" spellCheck={false} disabled={busy} /></div></div><div className="year-field"><label htmlFor="year">{c.year}</label><select id="year" value={year} onChange={e => setYear(Number(e.target.value))} disabled={busy}>{Array.from({ length: currentYear - 2007 }, (_, i) => currentYear - i).map(y => <option key={y} value={y}>{y}</option>)}</select></div></div>
             <button className="generate-button" type="submit" disabled={busy}><span>{busy ? c.generating : c.generate}</span>{busy ? <span className="spinner" /> : <ArrowIcon />}</button>
             {error && <p className="form-error" role="alert">{error}</p>}
           </form>
           <div className="demo-line">{c.justLooking} <a href={recapPath(getDemoStats(year), theme)}>{c.demo} <span>↗</span></a></div>
-          <div className="small-promises"><span><i>✓</i> {c.open}</span><span><i>✓</i> {c.account}</span><span><i>✓</i> {c.free}</span></div>
-          <div className="customize-panel"><div className="form-heading"><span>{c.customize}</span><span>{c.theme}</span></div><div className="theme-controls" role="group" aria-label={c.theme}>{(Object.keys(THEMES) as Theme[]).map(key => <button key={key} aria-pressed={theme === key} onClick={() => customize(key)}><i style={{ background: THEMES[key].bg }} />{c.themes[key]}</button>)}</div></div>
+          <div className="customize-panel"><div className="form-heading"><span>{c.theme}</span></div><div className="theme-controls" role="group" aria-label={c.theme}>{(Object.keys(THEMES) as Theme[]).map(key => <button key={key} aria-pressed={theme === key} onClick={() => customize(key)}><i style={{ background: THEMES[key].bg }} />{c.themes[key]}</button>)}</div></div>
           {isResult && <div className="result-actions"><button className="download-button" onClick={download} disabled={downloading}><DownloadIcon />{downloading ? c.downloading : c.download}</button>{canCopyImage && <button className="share-button" onClick={copyImage} disabled={copying}>{copying ? c.copyingImage : c.copyImage}</button>}<button className="share-button" onClick={share}>{c.share} <ArrowIcon /></button><p className="action-notice" role="status">{notice}</p></div>}
         </section>
-        <section className="hero-preview" aria-label={c.preview}><div className="preview-caption"><span>{stats.isDemo ? c.demoCard : `@${stats.username.toUpperCase()} · ${c.recap}`}</span><span>1080 × 1350</span></div><div className="card-shadow"><CardPreview stats={stats} theme={theme} /></div><div className="preview-footnote"><span className="tiny-spark">✳</span> {c.cardFoot}</div></section>
+        <section className="hero-preview" aria-label={c.preview}><div className="preview-caption"><span>{stats.isDemo ? c.demoCard : `@${stats.username.toUpperCase()} · ${c.recap}`}</span></div><div className="card-shadow"><CardPreview stats={stats} theme={theme} /></div></section>
       </div>
       <section className="data-section" aria-label={c.calendarNote}>
         <div className="section-title"><div className="eyebrow">{c.closer}</div><h2>{c.adds}</h2><p>{stats.isDemo ? c.sample : `${stats.year === currentYear ? c.ytd : c.full} · ${c.through} ${stats.through} · ${c.dates}`}</p></div>
