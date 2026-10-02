@@ -33,3 +33,22 @@ test("share links use the public origin and preserve year, theme and demo mode",
   assert.equal(new URL(SITE_URL + recapPath({ username: "a", year: 2024, isDemo: false }, "mono")).searchParams.has("demo"), false);
   assert.deepEqual(parsePresentation("bad"), { theme: "lime" });
 });
+
+// Social crawlers must receive the same year/theme/demo identity as the shared page.
+import { socialMetadata } from "../lib/social";
+test("social metadata preserves demo identity and uses a stable public image URL", () => {
+  const demo = socialMetadata(getDemoStats(2025), "violet");
+  assert.match(String(demo.title), /Demo/);
+  assert.match(String(demo.description), /Sample data/);
+  const og = demo.openGraph as { url: string; images: { url: string; width: number; height: number }[] };
+  const image = new URL(og.images[0].url);
+  assert.equal(image.origin, SITE_URL);
+  assert.deepEqual(Object.fromEntries(image.searchParams), { username: "octocat", year: "2025", theme: "violet", demo: "1" });
+  assert.equal(og.images[0].width, 1200);
+  assert.equal(og.images[0].height, 630);
+  assert.equal(og.url, shareUrl(getDemoStats(2025), "violet"));
+  const live = socialMetadata({ ...getDemoStats(2025), username: "user", isDemo: false }, "mono");
+  assert.doesNotMatch(String(live.title), /Demo/);
+  assert.doesNotMatch(String(live.description), /Sample data/);
+  assert.equal(socialMetadata().alternates?.canonical, SITE_URL);
+});

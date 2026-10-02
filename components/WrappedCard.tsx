@@ -1,6 +1,8 @@
 import type { WrappedStats } from "@/lib/types";
 import { COPY, THEMES, monthName, personaText, type Theme } from "@/lib/presentation";
 
+import { SITE_URL } from "@/lib/links";
+
 // One fixed-size composition powers both the responsive preview and PNG export.
 export function WrappedCard({ stats, theme = "lime", avatar = stats.avatarUrl, fontFamily = "Arimo, Noto Sans SC, sans-serif", labelFontFamily = "Noto Sans SC, sans-serif", serifFontFamily = "Libre Baskerville, Georgia, serif" }: {
   stats: WrappedStats; theme?: Theme; avatar?: string | null; fontFamily?: string; labelFontFamily?: string; serifFontFamily?: string;
@@ -32,6 +34,6 @@ export function WrappedCard({ stats, theme = "lime", avatar = stats.avatarUrl, f
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 22 }}><span style={{ fontSize: 20, fontFamily: labelFontFamily }}>{c.titleLabel}</span><span style={{ fontSize: 24, fontWeight: 700, border: `2px solid ${t.ink}50`, borderRadius: 30, padding: "8px 18px" }}>{personaText(stats)}</span></div>
     <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 16 }}><span style={{ fontSize: 18, fontFamily: labelFontFamily }}>{c.topRepo}</span><span style={{ fontSize: 24, fontWeight: 700 }}>{repo}</span></div>
     <div style={{ display: "flex", flexDirection: "column", background: t.panel, color: t.panelText, borderRadius: 16, padding: "19px 30px", marginTop: "auto" }}><span style={{ fontSize: 20, letterSpacing: 1, fontFamily: labelFontFamily }}>{c.biggest}</span><div style={{ display: "flex", justifyContent: "space-between", fontSize: 49, fontWeight: 700, marginTop: 6 }}><span>{monthName(stats.mostProductiveMonth?.name)}</span><svg width="52" height="52" viewBox="0 0 52 52" style={{ color: t.accent }}><path d="M9 43L43 9M15 9H43V37" fill="none" stroke={t.accent} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" /></svg></div></div>
-    <div style={{ display: "flex", justifyContent: "space-between", marginTop: 18, fontSize: 18 }}><span>github-wrapped · {stats.year}</span><span>{stats.isDemo ? c.sampleData : `${c.thru} ${stats.through}`}</span></div>
+    <div style={{ display: "flex", justifyContent: "space-between", marginTop: 18, fontSize: 18 }}><span>{new URL(SITE_URL).host}</span><span>{stats.isDemo ? c.sampleData : `${c.thru} ${stats.through}`}</span></div>
   </div>;
 }

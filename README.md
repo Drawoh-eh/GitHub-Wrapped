@@ -21,7 +21,9 @@
 
 1. Open [GitHub Wrapped](https://git-hub-wrapped-chi.vercel.app), enter your GitHub username, and pick a year.
 2. Choose a card theme: **Lime**, **Violet**, or **Mono**.
-3. Download your **1080 × 1350 PNG**, or share a link to the full recap.
+3. Download your **1080 × 1350 PNG**, copy the image in a supported browser, or share a link with a personalized preview.
+
+Each poster includes the project address. If image copying is unavailable or blocked, use **Download PNG**. Link previews keep the username, year, and theme; demo previews are labeled as sample data.
 
 No sign-up or installation needed to use the hosted site. Want a preview first? [The demo](https://git-hub-wrapped-chi.vercel.app/wrapped/octocat?year=2025&demo=1) uses clearly labeled sample data.
 

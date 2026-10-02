@@ -22,6 +22,9 @@ export function WrappedExperience({ initialStats, initialUsername = "", initialE
   const [error, setError] = useState(initialError);
   const [notice, setNotice] = useState("");
   const [downloading, setDownloading] = useState(false);
+  const [copying, setCopying] = useState(false);
+  const [canCopyImage, setCanCopyImage] = useState(false);
+  useEffect(() => { setCanCopyImage(Boolean(window.isSecureContext && typeof navigator.clipboard?.write === "function" && typeof window.ClipboardItem === "function" && (typeof ClipboardItem.supports !== "function" || ClipboardItem.supports("image/png")))); }, []);
   const stats = initialStats ?? getDemoStats(year);
   const isResult = Boolean(initialStats), c = COPY;
   useEffect(() => { setTheme(initialTheme); }, [initialTheme]);
@@ -41,13 +44,27 @@ export function WrappedExperience({ initialStats, initialUsername = "", initialE
     } catch (e) { setError(e instanceof Error ? e.message : "Please try again."); }
     finally { setBusy(false); }
   }
+  async function cardBlob() {
+    const params = new URLSearchParams({ username: stats.username, year: String(stats.year), theme, ...(stats.isDemo ? { demo: "1" } : {}) });
+    const response = await fetch(`/api/card?${params}`);
+    if (!response.ok || !response.headers.get("content-type")?.startsWith("image/png")) throw new Error(c.downloadError);
+    return response.blob();
+  }
+  async function copyImage() {
+    setCopying(true); setNotice("");
+    try {
+      // Pass the promise immediately: Safari requires write() during the click gesture.
+      const image = cardBlob();
+      void image.catch(() => {});
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": image })]);
+      setNotice(c.imageCopied);
+    } catch { setNotice(c.copyImageError); }
+    finally { setCopying(false); }
+  }
   async function download() {
     setDownloading(true); setNotice("");
     try {
-      const params = new URLSearchParams({ username: stats.username, year: String(stats.year), theme, download: "1", ...(stats.isDemo ? { demo: "1" } : {}) });
-      const response = await fetch(`/api/card?${params}`);
-      if (!response.ok) throw new Error(c.downloadError);
-      const url = URL.createObjectURL(await response.blob()), anchor = document.createElement("a");
+      const url = URL.createObjectURL(await cardBlob()), anchor = document.createElement("a");
       anchor.href = url; anchor.download = `github-wrapped-${stats.username}-${stats.year}-${theme}${stats.isDemo ? "-demo" : ""}.png`;
       document.body.appendChild(anchor); anchor.click(); anchor.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000); setNotice(c.ready);
@@ -78,7 +95,7 @@ export function WrappedExperience({ initialStats, initialUsername = "", initialE
           <div className="demo-line">{c.justLooking} <a href={recapPath(getDemoStats(year), theme)}>{c.demo} <span>↗</span></a></div>
           <div className="small-promises"><span><i>✓</i> {c.open}</span><span><i>✓</i> {c.account}</span><span><i>✓</i> {c.free}</span></div>
           <div className="customize-panel"><div className="form-heading"><span>{c.customize}</span><span>{c.theme}</span></div><div className="theme-controls" role="group" aria-label={c.theme}>{(Object.keys(THEMES) as Theme[]).map(key => <button key={key} aria-pressed={theme === key} onClick={() => customize(key)}><i style={{ background: THEMES[key].bg }} />{c.themes[key]}</button>)}</div></div>
-          {isResult && <div className="result-actions"><button className="download-button" onClick={download} disabled={downloading}><DownloadIcon />{downloading ? c.downloading : c.download}</button><button className="share-button" onClick={share}>{c.share} <ArrowIcon /></button><p className="action-notice" role="status">{notice}</p></div>}
+          {isResult && <div className="result-actions"><button className="download-button" onClick={download} disabled={downloading}><DownloadIcon />{downloading ? c.downloading : c.download}</button>{canCopyImage && <button className="share-button" onClick={copyImage} disabled={copying}>{copying ? c.copyingImage : c.copyImage}</button>}<button className="share-button" onClick={share}>{c.share} <ArrowIcon /></button><p className="action-notice" role="status">{notice}</p></div>}
         </section>
         <section className="hero-preview" aria-label={c.preview}><div className="preview-caption"><span>{stats.isDemo ? c.demoCard : `@${stats.username.toUpperCase()} · ${c.recap}`}</span><span>1080 × 1350</span></div><div className="card-shadow"><CardPreview stats={stats} theme={theme} /></div><div className="preview-footnote"><span className="tiny-spark">✳</span> {c.cardFoot}</div></section>
       </div>

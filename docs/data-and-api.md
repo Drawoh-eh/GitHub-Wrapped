@@ -37,19 +37,25 @@ References: [Create a fine-grained token](https://github.com/settings/personal-a
 GET /api/wrapped?username=Drawoh-eh&year=2025
 GET /api/card?username=Drawoh-eh&year=2025&theme=lime&download=1
 GET /wrapped/Drawoh-eh?year=2025&theme=lime
+GET /api/og?username=Drawoh-eh&year=2025&theme=lime
+GET /api/og
 ```
 
 | Parameter | Routes | Meaning |
 | --- | --- | --- |
 | `username` | JSON and PNG APIs; path segment for recap pages | A valid GitHub username. |
 | `year` | All recap routes | From 2008 to the current year; defaults to the current year when omitted. |
-| `theme` | Homepage, recap page, PNG API | `lime`, `violet`, or `mono`. Invalid values fall back to `lime`. |
-| `demo=1` | JSON API, PNG API, recap page | Deterministic sample data for `octocat`, explicitly labeled as a demo. |
+| `theme` | Homepage, recap page, PNG and social preview APIs | `lime`, `violet`, or `mono`. Invalid values fall back to `lime`. |
+| `demo=1` | JSON API, PNG and social preview APIs, recap page | Deterministic sample data for `octocat`, explicitly labeled as a demo. |
 | `download=1` | PNG API | Adds an attachment filename to the response. |
 
 The interface and exported cards are English-only. Legacy `lang` parameters are ignored. A theme change removes `lang` from the page URL; new share links do not include it.
 
 JSON successes return `WrappedStats` ([schema](../lib/types.ts)). PNG successes use `image/png` at 1080 × 1350. Errors return JSON. Share URLs always use `SITE_URL` in [`lib/links.ts`](../lib/links.ts), never a preview host or forwarded header; update it for your own public domain.
+
+Social previews use `/api/og` at **1200 × 630**, with Open Graph and Twitter metadata on recap pages. Without a username it renders a generic project preview. If a lookup fails, it returns a generic image with `no-store`; successful previews may be cached for one hour. Social platforms may cache previews independently. Demo previews are explicitly labeled.
+
+Image copying uses the browser’s PNG clipboard API in a secure context. Unsupported browsers keep the PNG download action; permission and rendering failures show a download fallback message.
 
 ## Runtime & caching
 

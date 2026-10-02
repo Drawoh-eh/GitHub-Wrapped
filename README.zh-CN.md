@@ -21,7 +21,9 @@
 
 1. 打开 [GitHub Wrapped](https://git-hub-wrapped-chi.vercel.app)，输入 GitHub 用户名，选择年份。
 2. 选择 **Lime（荧光绿）**、**Violet（紫罗兰）** 或 **Mono（黑白）** 主题。
-3. 下载 **1080 × 1350 PNG** 海报，或分享完整回顾的链接。
+3. 下载 **1080 × 1350 PNG** 海报，在支持的浏览器中复制图片，或分享带有个性化预览的链接。
+
+海报底部带有项目网址。如果浏览器不支持复制图片或拒绝剪贴板权限，使用 **Download PNG** 下载即可。链接预览保留用户名、年份和主题；演示预览明确标注示例数据。
 
 使用线上网站无需注册、安装，也不需要填写个人 Token。网站与海报保持英文；本页提供中文使用说明。[演示页面](https://git-hub-wrapped-chi.vercel.app/wrapped/octocat?year=2025&demo=1) 使用明确标注的示例数据。
 

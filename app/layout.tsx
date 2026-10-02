@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { socialMetadata } from "@/lib/social";
+import { SITE_URL } from "@/lib/links";
 import "./globals.css";
 import "@fontsource/arimo/400.css";
 import "@fontsource/arimo/700.css";
@@ -7,8 +9,8 @@ import "@fontsource/noto-sans-sc/400.css";
 import "@fontsource/noto-sans-sc/700.css";
 
 export const metadata: Metadata = {
-  title: "GitHub Wrapped — Your year in code",
-  description: "Turn your GitHub year into a story. Explore your commits, languages and streaks, then download a shareable recap.",
+  metadataBase: new URL(SITE_URL),
+  ...socialMetadata(),
   icons: { icon: "/icon.svg" },
 };
 
