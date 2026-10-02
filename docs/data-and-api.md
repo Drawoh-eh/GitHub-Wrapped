@@ -19,6 +19,8 @@
 
 Dates follow GitHub’s calendar buckets. The annual query covers the full selected year, preserving already published contributions whose GitHub date is ahead of UTC (for example, an October 3 commit while UTC is still October 2). No source dates are shifted. Daily aggregates do not establish coding hours or a user’s timezone. Publicly shared private-contribution counts may affect calendar totals as GitHub exposes them; private repository names are excluded. Configure the server token for public data only.
 
+Live calendars preserve GraphQL API counts and intensity levels. GitHub's API and public profile page can return different values for individual dates; this application does not rewrite dates or counts to force agreement with profile HTML. The source account, fetch time, and profile link are displayed next to the calendar.
+
 References: [GitHub contribution rules](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/troubleshooting-missing-contributions), [GraphQL user reference](https://docs.github.com/en/graphql/reference/users).
 
 ## Token setup
