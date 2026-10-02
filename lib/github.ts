@@ -67,7 +67,7 @@ async function fetchStats(username: string, year: number) {
   // Public deployments must not use broad classic tokens that expose private activity.
   const scopes = (response.headers.get("x-oauth-scopes") ?? "").split(",").map(s => s.trim());
   if (scopes.some(s => ["repo", "user", "read:user"].includes(s))) {
-    throw new WrappedError("Use a public-data GitHub token with no scopes. Broad private-data tokens are not supported.", 503);
+    throw new WrappedError("Use a GitHub token with public-only access. Broad private-data tokens are not supported.", 503);
   }
   const result = await response.json() as { data?: { user: User | null }; errors?: { type?: string }[] };
   if (result.errors?.length) {
