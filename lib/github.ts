@@ -10,7 +10,7 @@ type Collection = {
   contributionCalendar: { weeks: { contributionDays: ContributionDay[] }[] };
   commitContributionsByRepository: RepositoryLanguages[];
 };
-type User = { login: string; annual: Collection } & Record<string, { totalCommitContributions: number }>;
+type User = { login: string; name: string | null; avatarUrl: string; annual: Collection } & Record<string, { totalCommitContributions: number }>;
 const cache = new Map<string, { until: number; stats: WrappedStats }>();
 const pending = new Map<string, Promise<WrappedStats>>();
 let windowStart = 0, requests = 0;
@@ -26,12 +26,16 @@ function buildQuery(year: number, to: string) {
   return `query Wrapped($login: String!, $from: DateTime!, $to: DateTime!) {
     user(login: $login) {
       login
+      name
+      avatarUrl(size: 128)
       annual: contributionsCollection(from: $from, to: $to) {
         totalCommitContributions
         totalRepositoriesWithContributedCommits
         contributionCalendar { weeks { contributionDays { date contributionCount } } }
         commitContributionsByRepository(maxRepositories: 100) {
+          contributions(first: 1) { totalCount }
           repository {
+            nameWithOwner
             isPrivate
             languages(first: 100, orderBy: { field: SIZE, direction: DESC }) {
               edges { size node { name color } }
@@ -78,6 +82,7 @@ async function fetchStats(username: string, year: number) {
   if (!result.data?.user) throw new WrappedError("That GitHub account could not be found. Check the username.", 404);
   const user = result.data.user, annual = user.annual;
   return calculateStats({
+    displayName: user.name, avatarUrl: user.avatarUrl,
     username: user.login, year, through: input.to.slice(0, 10),
     commits: annual.totalCommitContributions, repositories: annual.totalRepositoriesWithContributedCommits,
     days: annual.contributionCalendar.weeks.flatMap(w => w.contributionDays),

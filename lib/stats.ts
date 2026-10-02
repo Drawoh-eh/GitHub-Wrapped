@@ -34,12 +34,20 @@ export function calculateStats(raw: RawWrappedData, isDemo = false): WrappedStat
   const months = MONTHS.map((name, i) => ({ name, count: raw.monthlyCommits[i] ?? 0 }));
   const best = months.reduce((a, b) => b.count > a.count ? b : a);
   const busiest = days.reduce<ContributionDay | null>((a, b) => !a || b.contributionCount > a.contributionCount ? b : a, null);
+  const top = raw.repositoryLanguages.filter(r => !r.repository.isPrivate && r.repository.nameWithOwner && (r.contributions?.totalCount ?? 0) > 0)
+    .sort((a, b) => (b.contributions?.totalCount ?? 0) - (a.contributions?.totalCount ?? 0) || a.repository.nameWithOwner!.localeCompare(b.repository.nameWithOwner!))[0];
+  const streak = calculateLongestStreak(days);
   return {
+    displayName: raw.displayName?.trim() || raw.username,
+    avatarUrl: raw.avatarUrl ?? null,
+    topRepository: top ? { name: top.repository.nameWithOwner!, commits: top.contributions!.totalCount } : null,
+    topRepositoryIncomplete: raw.repositories > raw.repositoryLanguages.length,
+    persona: streak >= 7 ? "steady" : raw.repositories >= 5 ? "explorer" : raw.commits > 0 ? "builder" : "beginning",
     username: raw.username, year: raw.year, through: raw.through, isDemo,
     commits: raw.commits, repositories: raw.repositories,
     contributions: days.reduce((n, day) => n + day.contributionCount, 0),
     activeDays: days.filter(day => day.contributionCount > 0).length,
-    longestStreak: calculateLongestStreak(days),
+    longestStreak: streak,
     mostProductiveMonth: best.count > 0 ? best : null,
     busiestDay: busiest && busiest.contributionCount > 0 ? busiest : null,
     months, days, languages: calculateLanguageStats(raw.repositoryLanguages),

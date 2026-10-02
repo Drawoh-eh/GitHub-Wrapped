@@ -16,9 +16,10 @@ export function getDemoStats(year = new Date().getUTCFullYear()) {
     index++;
   }
   return calculateStats({
+    displayName: "The Octocat", avatarUrl: null,
     username: "octocat", year, through: to.slice(0, 10),
     commits: monthlyCommits.reduce((a, b) => a + b, 0), repositories: 18, days, monthlyCommits,
-    repositoryLanguages: Array.from({ length: 18 }, () => ({ repository: { isPrivate: false, languages: {
+    repositoryLanguages: Array.from({ length: 18 }, (_, i) => ({ contributions: { totalCount: i === 0 ? Math.ceil(monthlyCommits.reduce((a,b)=>a+b,0) / 2) : 1 }, repository: { nameWithOwner: i === 0 ? "octocat/hello-world" : `octocat/demo-${i}`, isPrivate: false, languages: {
       edges: [
         { size: 6100, node: { name: "Python", color: "#3572a5" } },
         { size: 2300, node: { name: "TypeScript", color: "#3178c6" } },

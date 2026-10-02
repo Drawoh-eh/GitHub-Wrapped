@@ -1,7 +1,9 @@
 export type ContributionDay = { date: string; contributionCount: number };
 export type Language = { name: string; bytes: number; color: string; percentage: number };
 export type RepositoryLanguages = {
+  contributions?: { totalCount: number };
   repository: {
+    nameWithOwner?: string;
     isPrivate: boolean;
     languages: {
       edges: { size: number; node: { name: string; color: string | null } }[];
@@ -10,6 +12,8 @@ export type RepositoryLanguages = {
   };
 };
 export type RawWrappedData = {
+  displayName?: string | null;
+  avatarUrl?: string | null;
   username: string;
   year: number;
   through: string;
@@ -20,6 +24,11 @@ export type RawWrappedData = {
   repositoryLanguages: RepositoryLanguages[];
 };
 export type WrappedStats = {
+  displayName: string;
+  avatarUrl: string | null;
+  topRepository: { name: string; commits: number } | null;
+  topRepositoryIncomplete: boolean;
+  persona: "steady" | "explorer" | "builder" | "beginning";
   username: string;
   year: number;
   through: string;
