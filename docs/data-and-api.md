@@ -18,7 +18,7 @@
 | Favorite day | Weekday with the highest contribution-calendar count. Ties use the earliest weekday in Sunday-to-Saturday order. |
 | Active months | Number of months with at least one commit contribution in the selected year. |
 | Consistency | Active contribution-calendar days divided by elapsed calendar days represented in the selected-year response. |
-| Developer DNA | Up to three rule-based tags: one for stack, one for rhythm, and one for yearly achievement. Examples include Pythonista, Polyglot, Weekend Warrior, All-Year Coder, Streak Master, Deep Diver, Project Explorer, and Century Club. For fun, not a productivity score. |
+| Developer DNA | Up to three rule-based tags: one for stack, one for rhythm, and one for yearly achievement. Examples include Pythonista, Polyglot, Weekend Warrior, Monday Starter, Year-Round Coder, Streak Master, Deep Diver, Repo Ranger, Four-Digit Club, Community Contributor, and Century Club. For fun, not a productivity score. |
 | Current year | Published activity for the selected year. The calendar cutoff is the current UTC date or latest nonzero GitHub contribution date, whichever is later. Future empty dates are omitted. Future months remain zero. |
 
 Dates follow GitHub’s calendar buckets. The annual query covers the full selected year, preserving already published contributions whose GitHub date is ahead of UTC (for example, an October 3 commit while UTC is still October 2). No source dates are shifted. Daily aggregates do not establish coding hours or a user’s timezone. Publicly shared private-contribution counts may affect calendar totals as GitHub exposes them; private repository names are excluded. Configure the server token for public data only.
