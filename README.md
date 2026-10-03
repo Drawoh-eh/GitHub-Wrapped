@@ -2,7 +2,7 @@
   <img src="public/icon.svg" width="72" alt="GitHub Wrapped logo" />
   <h1>GitHub Wrapped</h1>
   <p><strong>Your year in code. One card worth sharing.</strong></p>
-  <p>A yearly GitHub recap with your commits, languages, streaks, and favorite public project.</p>
+  <p>A yearly GitHub recap with developer DNA, coding rhythm, languages, streaks, and main quests.</p>
   <p>
     <a href="https://git-hub-wrapped-chi.vercel.app"><strong>Make your Wrapped</strong></a>
   </p>
