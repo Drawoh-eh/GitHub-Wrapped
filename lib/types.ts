@@ -1,6 +1,7 @@
 export type ContributionLevel = "NONE" | "FIRST_QUARTILE" | "SECOND_QUARTILE" | "THIRD_QUARTILE" | "FOURTH_QUARTILE";
 export type ContributionDay = { date: string; contributionCount: number; contributionLevel?: ContributionLevel };
 export type Language = { name: string; bytes: number; color: string; percentage: number };
+export type DeveloperTag = { label: string; category: "stack" | "habit" | "achievement" };
 export type RepositoryLanguages = {
   contributions?: { totalCount: number };
   repository: {
@@ -29,8 +30,16 @@ export type WrappedStats = {
   displayName: string;
   avatarUrl: string | null;
   topRepository: { name: string; commits: number } | null;
+  topRepositories: { name: string; commits: number }[];
   topRepositoryIncomplete: boolean;
   persona: "steady" | "explorer" | "builder" | "beginning";
+  personalityTags: DeveloperTag[];
+  codingRhythm: {
+    weekendEnergy: number;
+    favoriteDay: string | null;
+    activeMonths: number;
+    consistency: number;
+  };
   username: string;
   year: number;
   through: string;
