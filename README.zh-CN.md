@@ -4,10 +4,11 @@
   <p><strong>把你的代码这一年，变成一张值得分享的卡片。</strong></p>
   <p>回顾 GitHub 提交、仓库语言、连续贡献和最常贡献的公开项目。</p>
   <p>
-    <a href="https://git-hub-wrapped-chi.vercel.app"><strong>生成我的回顾</strong></a> ·
-    <a href="https://git-hub-wrapped-chi.vercel.app/wrapped/octocat?year=2025&demo=1">体验演示</a> ·
+    <a href="https://git-hub-wrapped-chi.vercel.app"><strong>生成我的回顾</strong></a>
+  </p>
+  <p>
     <a href="README.md">English</a> ·
-    <a href="https://github.com/Drawoh-eh/GitHub-Wrapped/issues">反馈问题</a>
+    <strong>简体中文</strong>
   </p>
   <p>
     <a href="LICENSE"><img src="https://img.shields.io/github/license/Drawoh-eh/GitHub-Wrapped?style=flat-square&color=c8ff62" alt="MIT 许可证" /></a>
