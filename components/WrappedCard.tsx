@@ -1,5 +1,5 @@
 import type { WrappedStats } from "@/lib/types";
-import { COPY, THEMES, monthName, personaText, type Theme } from "@/lib/presentation";
+import { COPY, THEMES, monthName, type Theme } from "@/lib/presentation";
 
 import { SITE_URL } from "@/lib/links";
 
@@ -9,8 +9,8 @@ export function WrappedCard({ stats, theme = "lime", avatar = stats.avatarUrl, f
 }) {
   const c = COPY, t = THEMES[theme];
   const name = Array.from(stats.displayName).slice(0, 30).join("");
-  const fullRepo = stats.topRepository?.name ?? c.noRepo;
-  const repo = fullRepo.length > 43 ? fullRepo.slice(0, 40) + "…" : fullRepo;
+  const fullRepo = stats.topRepositories[0]?.name ?? c.noRepo;
+  const repo = fullRepo.length > 38 ? fullRepo.slice(0, 35) + "…" : fullRepo;
   return <div style={{ width: 1080, height: 1350, display: "flex", flexDirection: "column", background: t.bg, color: t.ink, padding: "55px 68px", overflow: "hidden", fontFamily, lineHeight: 1.2, flexShrink: 0 }}>
     <div style={{ display: "flex", justifyContent: "space-between", fontSize: 26, fontWeight: 700, letterSpacing: 2, fontFamily: labelFontFamily }}><span>GITHUB WRAPPED</span><span>{stats.isDemo ? "DEMO / " : ""}{stats.year}</span></div>
     <div style={{ display: "flex", flexDirection: "column", fontSize: 90, fontWeight: 700, letterSpacing: -5, lineHeight: 1.08, marginTop: 26 }}><span>{c.cardTitle1}</span><span style={{ display: "flex" }}>A lot of <span style={{ fontFamily: serifFontFamily, fontWeight: 400, fontStyle: "italic", marginLeft: 18, letterSpacing: -4 }}>code.</span></span></div>
@@ -31,8 +31,14 @@ export function WrappedCard({ stats, theme = "lime", avatar = stats.avatarUrl, f
       <div style={{ display: "flex", flexWrap: "wrap", gap: 20, fontSize: 23, marginTop: 12 }}>{stats.languages.slice(0, 3).map(language => <span key={language.name}>{language.name} {Math.round(language.percentage)}%</span>)}{stats.languages.length === 0 && <span>{c.languageEmpty}</span>}</div>
       <span style={{ fontSize: 17, marginTop: 10 }}>{c.codeBytes}{stats.languagesIncomplete ? ` · ${c.partialShort}` : ""}</span>
     </div>
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 22 }}><span style={{ fontSize: 20, fontFamily: labelFontFamily }}>{c.titleLabel}</span><span style={{ fontSize: 24, fontWeight: 700, border: `2px solid ${t.ink}50`, borderRadius: 30, padding: "8px 18px" }}>{personaText(stats)}</span></div>
-    <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 16 }}><span style={{ fontSize: 18, fontFamily: labelFontFamily }}>{c.topRepo}</span><span style={{ fontSize: 24, fontWeight: 700 }}>{repo}</span></div>
+    <div style={{ display: "flex", flexDirection: "column", marginTop: 20 }}>
+      <span style={{ fontSize: 18, fontFamily: labelFontFamily, letterSpacing: 1 }}>{c.titleLabel}</span>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 10 }}>{stats.personalityTags.map(tag => <span key={tag.category} style={{ display: "flex", border: `2px solid ${t.ink}45`, borderRadius: 28, padding: "7px 14px", fontSize: 20, fontWeight: 700 }}>{tag.label}</span>)}</div>
+    </div>
+    <div style={{ display: "flex", borderTop: `2px solid ${t.ink}30`, paddingTop: 14, marginTop: 16, gap: 50 }}>
+      <div style={{ display: "flex", flexDirection: "column", minWidth: 190 }}><span style={{ fontSize: 16, fontFamily: labelFontFamily, letterSpacing: 1 }}>{c.cardRhythm}</span><span style={{ fontSize: 34, fontWeight: 700, marginTop: 5 }}>{Math.round(stats.codingRhythm.weekendEnergy)}%</span></div>
+      <div style={{ display: "flex", flexDirection: "column", minWidth: 0, flex: 1 }}><span style={{ fontSize: 16, fontFamily: labelFontFamily, letterSpacing: 1 }}>{c.cardQuests}</span><span style={{ fontSize: 22, fontWeight: 700, marginTop: 7 }}>{repo}</span></div>
+    </div>
     <div style={{ display: "flex", flexDirection: "column", background: t.panel, color: t.panelText, borderRadius: 16, padding: "19px 30px", marginTop: "auto" }}><span style={{ fontSize: 20, letterSpacing: 1, fontFamily: labelFontFamily }}>{c.biggest}</span><div style={{ display: "flex", justifyContent: "space-between", fontSize: 49, fontWeight: 700, marginTop: 6 }}><span>{monthName(stats.mostProductiveMonth?.name)}</span><svg width="52" height="52" viewBox="0 0 52 52" style={{ color: t.accent }}><path d="M9 43L43 9M15 9H43V37" fill="none" stroke={t.accent} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" /></svg></div></div>
     <div style={{ display: "flex", justifyContent: "space-between", marginTop: 18, fontSize: 18 }}><span>{new URL(SITE_URL).host}</span><span>{stats.isDemo ? c.sampleData : `${c.thru} ${stats.through}`}</span></div>
   </div>;
