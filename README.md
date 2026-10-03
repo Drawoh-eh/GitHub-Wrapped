@@ -48,13 +48,15 @@ All three cards show **sample data**. Click a card to see the full-size PNG.
 ## What’s inside
 
 - **Your year at a glance** — commit contributions, contributed repositories, longest streak, and busiest month.
-- **A personal card** — your avatar, display name, top public repository, and a playful builder title.
+- **Developer DNA** — three playful tags drawn from your language mix, contribution rhythm, streaks, focus, and yearly activity.
+- **Coding rhythm** — weekend energy, favorite contribution day, active months, and consistency based on GitHub’s contribution calendar.
+- **Main quests** — the two public repositories with the most commit contributions in the selected year.
 - **The fuller picture** — monthly activity, a contribution calendar, active days, and repository language mix. Tap or focus months and days for exact counts; browse the calendar with arrow keys.
 - **A shareable result** — matching page and PNG layouts, plus links that keep your year and theme.
 - **Public data, server-side access** — visitors never enter a token; self-hosters configure one on the server.
 - **A small, inspectable stack** — Next.js, React, TypeScript, and GitHub’s GraphQL API. No database or AI API required.
 
-> Language percentages describe current code bytes in public repositories you committed to, not code you personally wrote that year. Commit counts follow GitHub’s contribution rules. [See the data definitions.](docs/data-and-api.md#metric-definitions)
+> Language percentages describe current code bytes in public repositories you committed to, not code you personally wrote that year. Coding rhythm uses GitHub contribution-calendar dates and does not infer coding hours or timezone. Commit counts follow GitHub’s contribution rules. [See the data definitions.](docs/data-and-api.md#metric-definitions)
 
 ## Run locally
 
