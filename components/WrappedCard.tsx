@@ -34,6 +34,10 @@ export function WrappedCard({ stats, theme = "lime", avatar = stats.avatarUrl, f
   const fullRepo = mainQuest?.name ?? c.noRepo;
   const repo = fullRepo.length > 38 ? fullRepo.slice(0, 35) + "…" : fullRepo;
   const topLanguage = stats.languages[0];
+  const tagCategory = { stack: "STACK", habit: "RHYTHM", achievement: "ACHIEVEMENT" } as const;
+  const languagePalette = theme === "mono"
+    ? [t.ink, `${t.ink}b0`, `${t.ink}78`, `${t.ink}42`]
+    : [t.ink, t.accent, `${t.ink}88`, `${t.accent}99`];
 
   return <div style={{
     width: 1080, height: 1350, display: "flex", flexDirection: "column",
@@ -66,18 +70,18 @@ export function WrappedCard({ stats, theme = "lime", avatar = stats.avatarUrl, f
       <span style={{ fontSize: 25, fontWeight: 700, letterSpacing: 1.6, marginTop: 14 }}>COMMIT CONTRIBUTIONS</span>
     </div>
 
-    <div style={{ display: "flex", gap: 14, marginTop: 38 }}>
-      {stats.personalityTags.map((tag, index) => {
-        const filled = index === 0;
-        return <div key={tag.category} style={{
-          display: "flex", alignItems: "center", minWidth: 0, flex: 1,
-          minHeight: 72, padding: "0 18px", border: `2px solid ${t.ink}4a`,
-          borderRadius: 12, background: filled ? t.ink : `${t.ink}0b`,
-          color: filled ? t.bg : t.ink,
-        }}>
-          <span style={{ fontSize: tag.label.length > 17 ? 17 : 19, fontWeight: 700, lineHeight: 1.08 }}>{tag.label}</span>
-        </div>;
-      })}
+    <div style={{ display: "flex", marginTop: 40, borderTop: `2px solid ${t.ink}30`, borderBottom: `2px solid ${t.ink}30`, padding: "20px 0 21px" }}>
+      {stats.personalityTags.map((tag, index) => <div key={tag.category} style={{
+        display: "flex", flexDirection: "column", minWidth: 0, flex: 1,
+        paddingLeft: index === 0 ? 0 : 22, paddingRight: index === stats.personalityTags.length - 1 ? 0 : 22,
+        borderLeft: index === 0 ? "none" : `1px solid ${t.ink}2f`,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ width: 7, height: 7, borderRadius: 4, background: index === 0 ? t.accent : t.ink, opacity: index === 0 ? 1 : .45 }} />
+          <span style={{ fontSize: 11, letterSpacing: 1.8, opacity: .5, fontFamily: labelFontFamily }}>{tagCategory[tag.category]}</span>
+        </div>
+        <span style={{ fontSize: tag.label.length > 17 ? 20 : 23, fontWeight: 700, lineHeight: 1.04, marginTop: 12 }}>{tag.label}</span>
+      </div>)}
     </div>
 
     <div style={{ display: "flex", gap: 22, marginTop: 42 }}>
@@ -87,7 +91,7 @@ export function WrappedCard({ stats, theme = "lime", avatar = stats.avatarUrl, f
           <span style={{ fontSize: topLanguage.name.length > 14 ? 38 : 52, fontWeight: 700, letterSpacing: -2, marginTop: 10 }}>{topLanguage.name}</span>
           <span style={{ fontSize: 40, fontWeight: 700, marginTop: 2 }}>{Math.round(topLanguage.percentage)}%</span>
           <div style={{ display: "flex", width: "100%", height: 8, borderRadius: 4, overflow: "hidden", marginTop: 14, background: `${t.ink}18` }}>
-            {stats.languages.map(language => <span key={language.name} style={{ display: "flex", width: `${language.percentage}%`, height: "100%", background: language.color }} />)}
+            {stats.languages.map((language, index) => <span key={language.name} style={{ display: "flex", width: `${language.percentage}%`, height: "100%", background: languagePalette[index % languagePalette.length] }} />)}
           </div>
         </> : <span style={{ fontSize: 25, marginTop: 14, opacity: .62 }}>NO DATA</span>}
       </div>
