@@ -4,10 +4,11 @@
   <p><strong>Your year in code. One card worth sharing.</strong></p>
   <p>A yearly GitHub recap with your commits, languages, streaks, and favorite public project.</p>
   <p>
-    <a href="https://git-hub-wrapped-chi.vercel.app"><strong>Make your Wrapped</strong></a> ·
-    <a href="https://git-hub-wrapped-chi.vercel.app/wrapped/octocat?year=2025&demo=1">Try the demo</a> ·
-    <a href="README.zh-CN.md">简体中文</a> ·
-    <a href="https://github.com/Drawoh-eh/GitHub-Wrapped/issues">Report an issue</a>
+    <a href="https://git-hub-wrapped-chi.vercel.app"><strong>Make your Wrapped</strong></a>
+  </p>
+  <p>
+    <strong>English</strong> ·
+    <a href="README.zh-CN.md">简体中文</a>
   </p>
   <p>
     <a href="LICENSE"><img src="https://img.shields.io/github/license/Drawoh-eh/GitHub-Wrapped?style=flat-square&color=c8ff62" alt="MIT license" /></a>
