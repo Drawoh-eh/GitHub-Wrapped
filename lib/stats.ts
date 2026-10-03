@@ -93,7 +93,7 @@ function habitTag(weekendEnergy: number, activeMonths: number, favoriteDay: stri
 }
 
 function achievementTag(raw: RawWrappedData, streak: number, topRepoFocus: number, activeDays: number): DeveloperTag {
-  if (raw.commits === 0) return { label: "A New Chapter", category: "achievement" };
+  if (raw.commits === 0 && activeDays === 0) return { label: "A New Chapter", category: "achievement" };\n  if (raw.commits === 0) return { label: "Community Contributor", category: "achievement" };
   if (streak >= 30) return { label: "Streak Master", category: "achievement" };
   if (streak >= 14) return { label: "On a Roll", category: "achievement" };
   if (activeDays >= 250) return { label: "Always Shipping", category: "achievement" };
