@@ -10,16 +10,16 @@ function gridColor(day: ContributionDay | null, ink: string) {
   return `${ink}2f`;
 }
 
-function MiniContributionGrid({ stats, ink }: { stats: WrappedStats; ink: string }) {
-  const recent = stats.days.slice(-84);
+function ContributionBand({ stats, ink }: { stats: WrappedStats; ink: string }) {
+  const recent = stats.days.slice(-280);
   const padded: (ContributionDay | null)[] = [
-    ...Array(Math.max(0, 84 - recent.length)).fill(null),
+    ...Array(Math.max(0, 280 - recent.length)).fill(null),
     ...recent,
   ];
-  const weeks = Array.from({ length: 12 }, (_, index) => padded.slice(index * 7, index * 7 + 7));
-  return <div style={{ display: "flex", gap: 8, opacity: .72 }}>
-    {weeks.map((week, weekIndex) => <div key={weekIndex} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      {week.map((day, dayIndex) => <span key={day?.date ?? `${weekIndex}-${dayIndex}`} style={{ width: 14, height: 14, borderRadius: 2, background: gridColor(day, ink) }} />)}
+  const weeks = Array.from({ length: 40 }, (_, index) => padded.slice(index * 7, index * 7 + 7));
+  return <div style={{ display: "flex", justifyContent: "center", gap: 7, opacity: .68 }}>
+    {weeks.map((week, weekIndex) => <div key={weekIndex} style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+      {week.map((day, dayIndex) => <span key={day?.date ?? `${weekIndex}-${dayIndex}`} style={{ width: 13, height: 13, borderRadius: 2, background: gridColor(day, ink) }} />)}
     </div>)}
   </div>;
 }
@@ -34,7 +34,6 @@ export function WrappedCard({ stats, theme = "lime", avatar = stats.avatarUrl, f
   const fullRepo = mainQuest?.name ?? c.noRepo;
   const repo = fullRepo.length > 38 ? fullRepo.slice(0, 35) + "…" : fullRepo;
   const topLanguage = stats.languages[0];
-  const tagTransforms = ["rotate(-2deg)", "rotate(2deg)", "rotate(-1deg)"];
 
   return <div style={{
     width: 1080, height: 1350, display: "flex", flexDirection: "column",
@@ -57,32 +56,27 @@ export function WrappedCard({ stats, theme = "lime", avatar = stats.avatarUrl, f
       </div>
     </div>
 
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 34, marginTop: 46 }}>
-      <div style={{ display: "flex", flexDirection: "column", width: 610, position: "relative", zIndex: 2 }}>
-        <span style={{ fontSize: 82, fontWeight: 700, letterSpacing: -4.8, lineHeight: .96 }}>{quote.line1}</span>
-        <span style={{ fontSize: 82, fontWeight: 700, letterSpacing: -4.8, lineHeight: .96 }}>{quote.line2}</span>
-      </div>
-      <div style={{ display: "flex", width: 270, justifyContent: "flex-end", paddingTop: 8 }}>
-        <MiniContributionGrid stats={stats} ink={t.ink} />
-      </div>
+    <div style={{ display: "flex", flexDirection: "column", marginTop: 46 }}>
+      <span style={{ fontSize: 84, fontWeight: 700, letterSpacing: -5, lineHeight: .96 }}>{quote.line1}</span>
+      <span style={{ fontSize: 84, fontWeight: 700, letterSpacing: -5, lineHeight: .96 }}>{quote.line2}</span>
     </div>
 
-    <div style={{ display: "flex", flexDirection: "column", position: "relative", marginTop: 46, minHeight: 250 }}>
-      <span style={{ position: "absolute", right: 2, top: -36, fontSize: 196, fontWeight: 700, letterSpacing: -10, opacity: .06 }}>PUSH</span>
-      <span style={{ fontSize: stats.commits >= 1000000 ? 142 : 176, fontWeight: 700, lineHeight: .88, letterSpacing: -9, position: "relative", zIndex: 2 }}>{stats.commits.toLocaleString("en-US")}</span>
-      <span style={{ fontSize: 25, fontWeight: 700, letterSpacing: 1.6, marginTop: 13, position: "relative", zIndex: 2 }}>COMMIT CONTRIBUTIONS</span>
+    <div style={{ display: "flex", flexDirection: "column", marginTop: 44 }}>
+      <span style={{ fontSize: stats.commits >= 1000000 ? 146 : 180, fontWeight: 700, lineHeight: .86, letterSpacing: -9 }}>{stats.commits.toLocaleString("en-US")}</span>
+      <span style={{ fontSize: 25, fontWeight: 700, letterSpacing: 1.6, marginTop: 14 }}>COMMIT CONTRIBUTIONS</span>
     </div>
 
-    <div style={{ display: "flex", alignItems: "center", gap: 15, minHeight: 64, marginTop: 20 }}>
+    <div style={{ display: "flex", gap: 14, marginTop: 38 }}>
       {stats.personalityTags.map((tag, index) => {
         const filled = index === 0;
-        return <span key={tag.category} style={{
-          display: "flex", alignItems: "center", justifyContent: "center",
-          minHeight: 46, padding: "10px 18px", border: `2px solid ${t.ink}72`,
-          borderRadius: index === 2 ? 6 : 28, fontSize: 18, fontWeight: 700,
-          background: filled ? t.ink : "transparent", color: filled ? t.bg : t.ink,
-          transform: tagTransforms[index] ?? "none", letterSpacing: .35,
-        }}>{tag.label.toUpperCase()}</span>;
+        return <div key={tag.category} style={{
+          display: "flex", alignItems: "center", minWidth: 0, flex: 1,
+          minHeight: 72, padding: "0 18px", border: `2px solid ${t.ink}4a`,
+          borderRadius: 12, background: filled ? t.ink : `${t.ink}0b`,
+          color: filled ? t.bg : t.ink,
+        }}>
+          <span style={{ fontSize: tag.label.length > 17 ? 17 : 19, fontWeight: 700, lineHeight: 1.08 }}>{tag.label}</span>
+        </div>;
       })}
     </div>
 
@@ -90,7 +84,7 @@ export function WrappedCard({ stats, theme = "lime", avatar = stats.avatarUrl, f
       <div style={{ display: "flex", flexDirection: "column", width: "44%", borderTop: `2px solid ${t.ink}38`, paddingTop: 20 }}>
         <span style={{ fontSize: 14, letterSpacing: 2, opacity: .55, fontFamily: labelFontFamily }}>TOP LANGUAGE</span>
         {topLanguage ? <>
-          <span style={{ fontSize: topLanguage.name.length > 14 ? 38 : 52, fontWeight: 700, letterSpacing: -2, marginTop: 10 }}>{topLanguage.name.toUpperCase()}</span>
+          <span style={{ fontSize: topLanguage.name.length > 14 ? 38 : 52, fontWeight: 700, letterSpacing: -2, marginTop: 10 }}>{topLanguage.name}</span>
           <span style={{ fontSize: 40, fontWeight: 700, marginTop: 2 }}>{Math.round(topLanguage.percentage)}%</span>
           <div style={{ display: "flex", width: "100%", height: 8, borderRadius: 4, overflow: "hidden", marginTop: 14, background: `${t.ink}18` }}>
             {stats.languages.map(language => <span key={language.name} style={{ display: "flex", width: `${language.percentage}%`, height: "100%", background: language.color }} />)}
@@ -105,7 +99,11 @@ export function WrappedCard({ stats, theme = "lime", avatar = stats.avatarUrl, f
       </div>
     </div>
 
-    <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginTop: "auto", paddingTop: 26, borderTop: `2px solid ${t.ink}24` }}>
+    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", minHeight: 190, marginTop: 34, borderTop: `2px solid ${t.ink}24`, borderBottom: `2px solid ${t.ink}24` }}>
+      <ContributionBand stats={stats} ink={t.ink} />
+    </div>
+
+    <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginTop: "auto", paddingTop: 22 }}>
       <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
         <span style={{ fontSize: 19, fontWeight: 700, letterSpacing: 1.3 }}>EVERY LITTLE PUSH ADDS UP.</span>
         <span style={{ fontSize: 13, opacity: .55 }}>{new URL(SITE_URL).host}</span>
