@@ -2,7 +2,7 @@
   <img src="public/icon.svg" width="72" alt="GitHub Wrapped 标志" />
   <h1>GitHub Wrapped</h1>
   <p><strong>把你的代码这一年，变成一张值得分享的卡片。</strong></p>
-  <p>回顾 GitHub 提交、仓库语言、连续贡献和最常贡献的公开项目。</p>
+  <p>把 GitHub 提交、开发节奏、语言构成、连续贡献和年度主战场变成一张开发者画像。</p>
   <p>
     <a href="https://git-hub-wrapped-chi.vercel.app"><strong>生成我的回顾</strong></a>
   </p>
