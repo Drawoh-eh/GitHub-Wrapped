@@ -80,21 +80,30 @@ function stackTag(languages: Language[]): DeveloperTag | null {
   return { label: top.name, category: "stack" };
 }
 
-function habitTag(weekendEnergy: number, activeMonths: number): DeveloperTag {
+function habitTag(weekendEnergy: number, activeMonths: number, favoriteDay: string | null, activeDays: number): DeveloperTag | null {
+  if (activeDays === 0) return null;
   if (weekendEnergy >= 40) return { label: "Weekend Warrior", category: "habit" };
   if (weekendEnergy >= 25) return { label: "Weekend Hacker", category: "habit" };
+  if (activeMonths === 12) return { label: "Year-Round Coder", category: "habit" };
   if (activeMonths >= 10) return { label: "All-Year Coder", category: "habit" };
+  if (favoriteDay === "Monday") return { label: "Monday Starter", category: "habit" };
+  if (favoriteDay === "Friday") return { label: "Friday Finisher", category: "habit" };
   if (weekendEnergy <= 10) return { label: "Weekday Regular", category: "habit" };
   return { label: "Balanced Builder", category: "habit" };
 }
 
-function achievementTag(raw: RawWrappedData, streak: number, topRepoFocus: number): DeveloperTag {
+function achievementTag(raw: RawWrappedData, streak: number, topRepoFocus: number, activeDays: number): DeveloperTag {
   if (raw.commits === 0) return { label: "A New Chapter", category: "achievement" };
   if (streak >= 30) return { label: "Streak Master", category: "achievement" };
   if (streak >= 14) return { label: "On a Roll", category: "achievement" };
+  if (activeDays >= 250) return { label: "Always Shipping", category: "achievement" };
+  if (activeDays >= 150) return { label: "Frequent Shipper", category: "achievement" };
   if (topRepoFocus >= 70) return { label: "Deep Diver", category: "achievement" };
+  if (raw.repositories >= 20) return { label: "Repo Ranger", category: "achievement" };
   if (raw.repositories >= 10) return { label: "Project Explorer", category: "achievement" };
+  if (raw.commits >= 1000) return { label: "Four-Digit Club", category: "achievement" };
   if (raw.commits >= 500) return { label: "Commit Machine", category: "achievement" };
+  if (raw.commits >= 250) return { label: "High Output", category: "achievement" };
   if (raw.commits >= 100) return { label: "Century Club", category: "achievement" };
   if (streak >= 7) return { label: "Steady Builder", category: "achievement" };
   if (raw.repositories >= 5) return { label: "Multi-Repo Builder", category: "achievement" };
@@ -116,8 +125,12 @@ export function calculateStats(raw: RawWrappedData, isDemo = false): WrappedStat
   const streak = calculateLongestStreak(days);
   const languages = calculateLanguageStats(raw.repositoryLanguages);
   const codingRhythm = calculateCodingRhythm(days, raw.monthlyCommits);
-  const personalityTags = [stackTag(languages), habitTag(codingRhythm.weekendEnergy, codingRhythm.activeMonths), achievementTag(raw, streak, topRepoFocus)]
-    .filter((tag): tag is DeveloperTag => Boolean(tag));
+  const activeDays = days.filter(day => day.contributionCount > 0).length;
+  const personalityTags = [
+    stackTag(languages),
+    habitTag(codingRhythm.weekendEnergy, codingRhythm.activeMonths, codingRhythm.favoriteDay, activeDays),
+    achievementTag(raw, streak, topRepoFocus, activeDays),
+  ].filter((tag): tag is DeveloperTag => Boolean(tag));
 
   return {
     displayName: raw.displayName?.trim() || raw.username,
@@ -131,7 +144,7 @@ export function calculateStats(raw: RawWrappedData, isDemo = false): WrappedStat
     username: raw.username, year: raw.year, through: raw.through, isDemo,
     commits: raw.commits, repositories: raw.repositories,
     contributions: days.reduce((n, day) => n + day.contributionCount, 0),
-    activeDays: days.filter(day => day.contributionCount > 0).length,
+    activeDays,
     longestStreak: streak,
     mostProductiveMonth: best.count > 0 ? best : null,
     busiestDay: busiest && busiest.contributionCount > 0 ? busiest : null,
