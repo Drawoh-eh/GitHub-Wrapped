@@ -18,6 +18,41 @@ export const COPY = {
     cardTitle1: "A year.", cardTitle2: "A lot of code.", commits: "commit contributions", repos: "repositories", codeSpeaks: "YOUR CODE SPEAKS", codeBytes: "Current repository code bytes", partialShort: "partial coverage", biggest: "YOUR BIGGEST MONTH", emptyMonth: "Your next chapter", sampleData: "SAMPLE DATA", thru: "THROUGH", titleLabel: "YOUR DEVELOPER DNA", cardRhythm: "WEEKEND ENERGY", cardQuests: "MAIN QUEST",
 } as const;
 export function monthName(name: string | undefined) { return name ?? COPY.emptyMonth; }
+
+export function heroQuote(stats: WrappedStats) {
+  const tags = new Set(stats.personalityTags.map(tag => tag.label));
+  if (tags.has("Streak Master") || tags.has("On a Roll") || tags.has("Steady Builder")) {
+    return { line1: "You just", line2: "kept going.", note: "one contribution at a time." };
+  }
+  if (tags.has("Weekend Warrior") || tags.has("Weekend Hacker")) {
+    return { line1: "Weekends were", line2: "made for shipping.", note: "apparently." };
+  }
+  if (tags.has("Deep Diver")) {
+    return { line1: "One project.", line2: "All in.", note: "focus looks good on you." };
+  }
+  if (tags.has("Pythonista")) {
+    return { line1: "A little more", line2: "Python, please.", note: "your stack had a favorite." };
+  }
+  if (tags.has("Repo Ranger") || tags.has("Project Explorer") || tags.has("Multi-Repo Builder")) {
+    return { line1: "One repo?", line2: "Never enough.", note: "you kept exploring." };
+  }
+  if (tags.has("Community Contributor")) {
+    return { line1: "Code wasn't", line2: "the whole story.", note: "showing up still counts." };
+  }
+  if (tags.has("A New Chapter")) {
+    return { line1: "Every story", line2: "starts somewhere.", note: "this one is yours." };
+  }
+  return { line1: "You wrote code.", line2: "It became a year.", note: "every little push added up." };
+}
+
+export function rhythmCaption(stats: WrappedStats) {
+  const energy = stats.codingRhythm.weekendEnergy;
+  if (energy >= 40) return "Your keyboard doesn't know weekends.";
+  if (energy >= 25) return "Weekends made the roadmap.";
+  if (energy <= 10) return "Weekends stayed mostly untouched.";
+  return "A fairly balanced week in code.";
+}
+
 export function personaText(stats: WrappedStats) {
   return { steady: "Steady Builder", explorer: "Project Explorer", builder: "Code Builder", beginning: "A New Chapter" }[stats.persona];
 }
