@@ -41,6 +41,17 @@ test("developer DNA combines stack, habit and achievement while coding rhythm us
   assert.deepEqual(stats.personalityTags.map(tag => tag.label), ["Pythonista", "Weekend Warrior", "Deep Diver"]);
 });
 
+test("non-commit activity is recognized as community contribution rather than an empty year", () => {
+  const stats = calculateStats({
+    ...raw,
+    commits: 0,
+    repositories: 0,
+    monthlyCommits: [],
+    days: [{ date: "2024-01-01", contributionCount: 1 }],
+  });
+  assert.equal(stats.personalityTags.at(-1)?.label, "Community Contributor");
+});
+
 test("fun titles have explicit thresholds and prioritize a seven-day streak", () => {
   assert.equal(calculateStats({ ...raw, commits: 0, repositories: 0 }).persona, "beginning");
   assert.equal(calculateStats(raw).persona, "builder");
