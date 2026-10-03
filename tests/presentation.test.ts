@@ -11,11 +11,36 @@ test("top repository uses commit totals and never exposes a private repository",
   const repositories = [{ name: "user/secret", private: true, count: 99 }, { name: "user/a", private: false, count: 2 }, { name: "user/b", private: false, count: 5 }];
   const stats = calculateStats({ ...raw, displayName: "  Nickname  ", repositoryLanguages: repositories.map(r => ({ contributions: { totalCount: r.count }, repository: { nameWithOwner: r.name, isPrivate: r.private, languages: { edges: [], pageInfo: { hasNextPage: false } } } })) });
   assert.deepEqual(stats.topRepository, { name: "user/b", commits: 5 });
+  assert.deepEqual(stats.topRepositories, [{ name: "user/b", commits: 5 }, { name: "user/a", commits: 2 }]);
   assert.equal(stats.displayName, "Nickname");
   assert.equal(calculateStats(raw).displayName, "user");
   assert.equal(calculateStats(raw).topRepository, null);
   assert.equal(calculateStats(raw).topRepositoryIncomplete, true);
 });
+test("developer DNA combines stack, habit and achievement while coding rhythm uses contribution calendar dates", () => {
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const date = `2024-01-0${i + 1}`;
+    const counts = [2, 0, 0, 0, 0, 5, 3];
+    return { date, contributionCount: counts[i] };
+  });
+  const stats = calculateStats({
+    ...raw,
+    commits: 120,
+    repositories: 2,
+    days,
+    monthlyCommits: [10, 1],
+    repositoryLanguages: [
+      { contributions: { totalCount: 90 }, repository: { nameWithOwner: "user/main", isPrivate: false, languages: { edges: [{ size: 800, node: { name: "Python", color: "#3572a5" } }, { size: 200, node: { name: "TypeScript", color: "#3178c6" } }], pageInfo: { hasNextPage: false } } } },
+      { contributions: { totalCount: 10 }, repository: { nameWithOwner: "user/side", isPrivate: false, languages: { edges: [{ size: 100, node: { name: "Python", color: "#3572a5" } }], pageInfo: { hasNextPage: false } } } },
+    ],
+  });
+  assert.equal(Math.round(stats.codingRhythm.weekendEnergy), 80);
+  assert.equal(stats.codingRhythm.favoriteDay, "Saturday");
+  assert.equal(stats.codingRhythm.activeMonths, 2);
+  assert.equal(Math.round(stats.codingRhythm.consistency), 43);
+  assert.deepEqual(stats.personalityTags.map(tag => tag.label), ["Pythonista", "Weekend Warrior", "Deep Diver"]);
+});
+
 test("fun titles have explicit thresholds and prioritize a seven-day streak", () => {
   assert.equal(calculateStats({ ...raw, commits: 0, repositories: 0 }).persona, "beginning");
   assert.equal(calculateStats(raw).persona, "builder");
