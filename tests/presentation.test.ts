@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { calculateStats } from "../lib/stats";
 import { getDemoStats } from "../lib/demo";
-import { parsePresentation, personaText } from "../lib/presentation";
+import { heroQuote, parsePresentation, personaText, rhythmCaption } from "../lib/presentation";
 import { recapPath, shareUrl, SITE_URL } from "../lib/links";
 import type { RawWrappedData } from "../lib/types";
 
@@ -60,6 +60,24 @@ test("fun titles have explicit thresholds and prioritize a seven-day streak", ()
   assert.equal(stats.persona, "steady");
   assert.equal(personaText(stats), "Steady Builder");
 });
+test("poster storytelling copy is deterministic and follows developer DNA", () => {
+  const demo = getDemoStats(2024);
+  assert.deepEqual(heroQuote({
+    ...demo,
+    personalityTags: [
+      { label: "Pythonista", category: "stack" },
+      { label: "Weekend Warrior", category: "habit" },
+      { label: "Deep Diver", category: "achievement" },
+    ],
+  }), { line1: "Weekends were", line2: "made for shipping.", note: "apparently." });
+  assert.equal(rhythmCaption({ ...demo, codingRhythm: { ...demo.codingRhythm, weekendEnergy: 42 } }), "Your keyboard doesn't know weekends.");
+  assert.equal(rhythmCaption({ ...demo, codingRhythm: { ...demo.codingRhythm, weekendEnergy: 8 } }), "Weekends stayed mostly untouched.");
+  assert.deepEqual(heroQuote({
+    ...demo,
+    personalityTags: [{ label: "A New Chapter", category: "achievement" }],
+  }), { line1: "Every story", line2: "starts somewhere.", note: "this one is yours." });
+});
+
 test("share links use the public origin and preserve year, theme and demo mode", () => {
   const stats = getDemoStats(2024);
   const url = new URL(shareUrl(stats, "violet"));
