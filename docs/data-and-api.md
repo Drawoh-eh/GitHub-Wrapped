@@ -13,8 +13,12 @@
 | Contributions / active days | All types in GitHub’s contribution calendar, including commits, issues, PRs, and reviews. Counts and relative intensity levels come directly from GitHub; colors do not use fixed count thresholds. |
 | Longest streak | Consecutive calendar dates with any contribution, within the selected year. |
 | Busiest day | Date with the most calendar contributions, not the most commits. Earliest date wins ties. |
-| Top public repository | Highest `commitContributionsByRepository.contributions.totalCount` among returned public repositories (maximum 100). Repository name breaks ties. Incomplete coverage is labeled. |
-| Builder title | In priority order: streak ≥ 7 days → Steady Builder; ≥ 5 contributed repositories → Project Explorer; any commits → Code Builder; otherwise A New Chapter. For fun, not a productivity score. |
+| Main quests | Top two public repositories by `commitContributionsByRepository.contributions.totalCount` among returned repositories (maximum 100). Repository name breaks ties. Incomplete coverage is labeled. |
+| Weekend energy | Share of all contribution-calendar activity that falls on Saturday or Sunday. The calendar includes commits, issues, PRs, and reviews; this is not a share of commit timestamps. |
+| Favorite day | Weekday with the highest contribution-calendar count. Ties use the earliest weekday in Sunday-to-Saturday order. |
+| Active months | Number of months with at least one commit contribution in the selected year. |
+| Consistency | Active contribution-calendar days divided by elapsed calendar days represented in the selected-year response. |
+| Developer DNA | Up to three rule-based tags: one for stack, one for rhythm, and one for yearly achievement. Examples include Pythonista, Polyglot, Weekend Warrior, All-Year Coder, Streak Master, Deep Diver, Project Explorer, and Century Club. For fun, not a productivity score. |
 | Current year | Published activity for the selected year. The calendar cutoff is the current UTC date or latest nonzero GitHub contribution date, whichever is later. Future empty dates are omitted. Future months remain zero. |
 
 Dates follow GitHub’s calendar buckets. The annual query covers the full selected year, preserving already published contributions whose GitHub date is ahead of UTC (for example, an October 3 commit while UTC is still October 2). No source dates are shifted. Daily aggregates do not establish coding hours or a user’s timezone. Publicly shared private-contribution counts may affect calendar totals as GitHub exposes them; private repository names are excluded. Configure the server token for public data only.
@@ -77,7 +81,7 @@ PNGs use Next.js [`ImageResponse`](https://nextjs.org/docs/app/api-reference/fun
 | `lib/stats.ts` | Pure metric calculations. |
 | `lib/demo.ts` | Clearly marked deterministic sample data. |
 | `lib/input.ts` | Username and year validation. |
-| `lib/presentation.ts` | English copy, themes, builder titles. |
+| `lib/presentation.ts` | English copy, themes, and developer-story labels. |
 | `lib/links.ts` | Canonical public share URLs. |
 | `lib/card-assets.ts` | Nickname font selection and avatar fetching. |
 | `lib/image-fonts.ts` | Four shared image fonts; social images omit nickname subsets. |
@@ -87,4 +91,4 @@ PNGs use Next.js [`ImageResponse`](https://nextjs.org/docs/app/api-reference/fun
 
 After updating `@fontsource/noto-sans-sc`, run `node scripts/generate-font-manifest.mjs` and commit the regenerated manifest. It preserves non-Latin display names while keeping unused font weights and WOFF2 files out of image functions. Fonts are read once per running process; only the subsets needed by each nickname are loaded.
 
-Potential next steps: story-style slides, more themes, and shared caching. Private recaps and coding-hour estimates are not implemented.
+Potential next steps: story-style slides, more themes, and shared caching. Private recaps and coding-hour estimates are not implemented; contribution dates are intentionally not treated as reliable commit-time data.
