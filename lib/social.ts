@@ -5,7 +5,7 @@ import { SITE_URL, shareUrl } from "./links";
 
 export function socialMetadata(stats?: WrappedStats, theme: Theme = "lime"): Metadata {
   const title = stats ? `${stats.isDemo ? "Demo · " : ""}@${stats.username}’s ${stats.year} GitHub Wrapped` : "GitHub Wrapped — Your year in code";
-  const description = stats ? `${stats.isDemo ? "Sample data: " : ""}${stats.commits.toLocaleString("en-US")} commit contributions. ${stats.longestStreak}-day streak. See the year in code and make your own recap.` : "Turn your GitHub year into a story. Explore your commits, languages and streaks, then download a shareable recap.";
+  const description = stats ? `${stats.isDemo ? "Sample data: " : ""}${stats.commits.toLocaleString("en-US")} commit contributions. ${stats.longestStreak}-day streak. See the year in code and make your own recap.` : "Turn your GitHub year into a story. Explore your developer DNA, coding rhythm, languages and main quests, then download a shareable recap.";
   const image = new URL("/api/og", SITE_URL);
   if (stats) {
     image.search = new URLSearchParams({ username: stats.username, year: String(stats.year), theme, ...(stats.isDemo ? { demo: "1" } : {}) }).toString();
