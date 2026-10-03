@@ -70,7 +70,7 @@ export function WrappedCard({ stats, theme = "lime", avatar = stats.avatarUrl, f
       <span style={{ fontSize: 25, fontWeight: 700, letterSpacing: 1.6, marginTop: 14 }}>COMMIT CONTRIBUTIONS</span>
     </div>
 
-    <div style={{ display: "flex", marginTop: 40, borderTop: `2px solid ${t.ink}30`, borderBottom: `2px solid ${t.ink}30`, padding: "20px 0 21px" }}>
+    <div style={{ display: "flex", marginTop: 40, padding: "20px 0 21px" }}>
       {stats.personalityTags.map((tag, index) => <div key={tag.category} style={{
         display: "flex", flexDirection: "column", minWidth: 0, flex: 1,
         paddingLeft: index === 0 ? 0 : 22, paddingRight: index === stats.personalityTags.length - 1 ? 0 : 22,
