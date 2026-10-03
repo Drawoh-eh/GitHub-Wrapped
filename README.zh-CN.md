@@ -117,7 +117,11 @@ GITHUB_TOKEN=your_server_only_token
 npm test
 npm run typecheck
 npm run build
+npx playwright install chromium
+npm run test:e2e
 ```
+
+推送到 `main` 或创建 PR 后，GitHub Actions 会自动运行单元测试、生产构建和 Chromium 页面检查。覆盖首屏完整封面、统计分屏、手机布局、滚动入口、异常恢复、年份切换和 PNG 下载；使用示例数据，无需 GitHub Token。失败时可从工作流附件查看截图和执行轨迹。
 
 请保持数据请求与计算逻辑分离，修改统计定义时同步更新[数据文档](docs/data-and-api.md)。不要在 Issue 或 PR 中提供 Token。
 

@@ -117,7 +117,11 @@ Found a bug or have a theme idea? [Open an issue](https://github.com/Drawoh-eh/G
 npm test
 npm run typecheck
 npm run build
+npx playwright install chromium
+npm run test:e2e
 ```
+
+Pushes to `main` and pull requests run unit tests, a production build, and Chromium checks on GitHub Actions. Browser checks cover complete covers above the fold, separate statistics sections, mobile layouts, the scroll link, error recovery, year navigation, and PNG downloads. They use demo data and need no GitHub token. Failed checks retain screenshots and traces in the workflow artifacts.
 
 Keep fetching separate from calculations, and update the [data documentation](docs/data-and-api.md) when metric definitions change. Please never include tokens in issues or pull requests.
 
