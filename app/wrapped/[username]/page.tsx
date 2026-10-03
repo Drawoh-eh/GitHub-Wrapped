@@ -24,9 +24,11 @@ export default async function WrappedPage({ params, searchParams }: PageProps) {
   const presentation = parsePresentation(query.theme);
   try {
     const stats = await loadRecap(username, query.year, query.demo === "1");
-    return <WrappedExperience initialStats={stats} initialTheme={presentation.theme} />;
+    return <WrappedExperience key={`${stats.username}:${stats.year}:${stats.isDemo}`} initialStats={stats} initialTheme={presentation.theme} />;
   } catch (error) {
     const message = error instanceof WrappedError ? error.message : "Something went wrong. Please try again.";
-    return <WrappedExperience initialUsername={username} initialError={message} initialTheme={presentation.theme} />;
+    const requestedYear = Number(query.year);
+    const initialYear = Number.isInteger(requestedYear) && requestedYear >= 2008 && requestedYear <= new Date().getUTCFullYear() ? requestedYear : undefined;
+    return <WrappedExperience key={`${username}:${query.year ?? ""}:error`} initialUsername={username} initialYear={initialYear} initialError={message} initialTheme={presentation.theme} />;
   }
 }

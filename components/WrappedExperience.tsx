@@ -1,26 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { getDemoStats } from "@/lib/demo";
 import type { WrappedStats } from "@/lib/types";
 import { COPY, THEMES, personaText, type Theme } from "@/lib/presentation";
 import { recapPath, shareUrl } from "@/lib/links";
+import { withRequestTimeout } from "@/lib/client-request";
 import { CardPreview } from "./CardPreview";
 import { MonthlyChart } from "./MonthlyChart";
 import { ContributionCalendar } from "./ContributionCalendar";
 import { ArrowIcon, DownloadIcon, GitHubIcon } from "./Icons";
 
 const REPOSITORY = "https://github.com/Drawoh-eh/GitHub-Wrapped";
-export function WrappedExperience({ initialStats, initialUsername = "", initialError = "", initialTheme = "lime" }: {
-  initialStats?: WrappedStats; initialUsername?: string; initialError?: string; initialTheme?: Theme;
+export function WrappedExperience({ initialStats, initialUsername = "", initialYear, initialError = "", initialTheme = "lime" }: {
+  initialStats?: WrappedStats; initialUsername?: string; initialYear?: number; initialError?: string; initialTheme?: Theme;
 }) {
   const router = useRouter();
   const currentYear = new Date().getUTCFullYear();
   const [username, setUsername] = useState(initialStats?.isDemo ? "" : initialStats?.username ?? initialUsername);
-  const [year, setYear] = useState(initialStats?.year ?? currentYear);
+  const [year, setYear] = useState(initialStats?.year ?? initialYear ?? currentYear);
   const [theme, setTheme] = useState<Theme>(initialTheme);
   const [busy, setBusy] = useState(false);
+  const [navigating, startTransition] = useTransition();
+  const generating = busy || navigating;
   const [error, setError] = useState(initialError);
   const [notice, setNotice] = useState("");
   const [downloading, setDownloading] = useState(false);
@@ -37,20 +40,33 @@ export function WrappedExperience({ initialStats, initialUsername = "", initialE
     window.history.replaceState(null, "", url);
   }
   async function generate(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault(); setBusy(true); setError(""); setNotice("");
+    event.preventDefault();
+    if (generating) return;
+    setBusy(true); setError(""); setNotice("");
     try {
-      const response = await fetch(`/api/wrapped?${new URLSearchParams({ username: username.trim(), year: String(year) })}`);
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error ?? "Couldn't generate your recap.");
-      router.push(recapPath(result, theme));
-    } catch (e) { setError(e instanceof Error ? e.message : "Please try again."); }
+      const result = await withRequestTimeout(async signal => {
+        const response = await fetch(`/api/wrapped?${new URLSearchParams({ username: username.trim(), year: String(year) })}`, { signal });
+        const result = await response.json().catch(() => null);
+        if (!response.ok || !result || typeof result.username !== "string" || !Number.isInteger(result.year)) {
+          throw new Error(typeof result?.error === "string" ? result.error : "Couldn't generate your recap. Please try again.");
+        }
+        return result;
+      });
+      startTransition(() => router.push(recapPath(result, theme)));
+    } catch (e) {
+      setError(e instanceof Error && e.name === "TimeoutError" ? "The request took too long. Please try again."
+        : e instanceof TypeError ? "Couldn't connect. Check your connection and try again."
+        : e instanceof Error ? e.message : "Please try again.");
+    }
     finally { setBusy(false); }
   }
   async function cardBlob() {
     const params = new URLSearchParams({ username: stats.username, year: String(stats.year), theme, ...(stats.isDemo ? { demo: "1" } : {}) });
-    const response = await fetch(`/api/card?${params}`);
-    if (!response.ok || !response.headers.get("content-type")?.startsWith("image/png")) throw new Error(c.downloadError);
-    return response.blob();
+    return withRequestTimeout(async signal => {
+      const response = await fetch(`/api/card?${params}`, { signal });
+      if (!response.ok || !response.headers.get("content-type")?.startsWith("image/png")) throw new Error(c.downloadError);
+      return response.blob();
+    }, 40_000);
   }
   async function copyImage() {
     setCopying(true); setNotice("");
@@ -88,9 +104,9 @@ export function WrappedExperience({ initialStats, initialUsername = "", initialE
           <div className="eyebrow"><span className="status-dot" /> {isResult ? `${stats.year} / ${c.recap}` : `${currentYear} / ${c.yearCode}`}</div>
           <h1>{isResult ? c.result1 : c.title1}<br /><span>{isResult ? c.result2 : c.title2}</span></h1>
           <p className="hero-description">{c.intro}</p>
-          <form className="username-form" onSubmit={generate} aria-busy={busy}>
-            <div className="form-fields"><div className="username-field"><label htmlFor="username">{c.username}</label><div className="input-wrap"><span>@</span><input id="username" name="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="Drawoh-eh" required maxLength={39} autoCapitalize="none" autoCorrect="off" spellCheck={false} disabled={busy} /></div></div><div className="year-field"><label htmlFor="year">{c.year}</label><select id="year" value={year} onChange={e => setYear(Number(e.target.value))} disabled={busy}>{Array.from({ length: currentYear - 2007 }, (_, i) => currentYear - i).map(y => <option key={y} value={y}>{y}</option>)}</select></div></div>
-            <button className="generate-button" type="submit" disabled={busy}><span>{busy ? c.generating : c.generate}</span>{busy ? <span className="spinner" /> : <ArrowIcon />}</button>
+          <form className="username-form" onSubmit={generate} aria-busy={generating}>
+            <div className="form-fields"><div className="username-field"><label htmlFor="username">{c.username}</label><div className="input-wrap"><span>@</span><input id="username" name="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="Drawoh-eh" required maxLength={39} autoCapitalize="none" autoCorrect="off" spellCheck={false} disabled={generating} /></div></div><div className="year-field"><label htmlFor="year">{c.year}</label><select id="year" value={year} onChange={e => setYear(Number(e.target.value))} disabled={generating}>{Array.from({ length: currentYear - 2007 }, (_, i) => currentYear - i).map(y => <option key={y} value={y}>{y}</option>)}</select></div></div>
+            <button className="generate-button" type="submit" disabled={generating}><span>{generating ? c.generating : c.generate}</span>{generating ? <span className="spinner" /> : <ArrowIcon />}</button>
             {error && <p className="form-error" role="alert">{error}</p>}
           </form>
           <div className="demo-line">{c.justLooking} <a href={recapPath(getDemoStats(year), theme)}>{c.demo} <span>↗</span></a></div>
