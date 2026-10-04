@@ -1,25 +1,18 @@
 import type { ContributionDay, WrappedStats } from "@/lib/types";
 import { COPY, THEMES, heroQuote, type Theme } from "@/lib/presentation";
 import { SITE_URL } from "@/lib/links";
+import { annualCalendarWeeks, contributionIntensity } from "@/lib/calendar";
 
 function gridColor(day: ContributionDay | null, ink: string) {
-  if (!day || day.contributionCount <= 0) return `${ink}12`;
-  if (day.contributionLevel === "FOURTH_QUARTILE" || day.contributionCount >= 7) return `${ink}b8`;
-  if (day.contributionLevel === "THIRD_QUARTILE" || day.contributionCount >= 4) return `${ink}7f`;
-  if (day.contributionLevel === "SECOND_QUARTILE" || day.contributionCount >= 2) return `${ink}50`;
-  return `${ink}2f`;
+  if (!day) return "transparent";
+  return `${ink}${["12", "2f", "50", "7f", "b8"][contributionIntensity(day)]}`;
 }
 
 function ContributionBand({ stats, ink }: { stats: WrappedStats; ink: string }) {
-  const recent = stats.days.slice(-280);
-  const padded: (ContributionDay | null)[] = [
-    ...Array(Math.max(0, 280 - recent.length)).fill(null),
-    ...recent,
-  ];
-  const weeks = Array.from({ length: 40 }, (_, index) => padded.slice(index * 7, index * 7 + 7));
-  return <div style={{ display: "flex", justifyContent: "center", gap: 7, opacity: .68 }}>
-    {weeks.map((week, weekIndex) => <div key={weekIndex} style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-      {week.map((day, dayIndex) => <span key={day?.date ?? `${weekIndex}-${dayIndex}`} style={{ width: 13, height: 13, borderRadius: 2, background: gridColor(day, ink) }} />)}
+  const weeks = annualCalendarWeeks(stats.days, stats.year);
+  return <div style={{ display: "flex", justifyContent: "center", gap: 5, opacity: .68 }}>
+    {weeks.map((week, weekIndex) => <div key={weekIndex} style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+      {week.map((day, dayIndex) => <span key={day?.date ?? `${weekIndex}-${dayIndex}`} style={{ width: 12, height: 12, borderRadius: 2, background: gridColor(day, ink) }} />)}
     </div>)}
   </div>;
 }
@@ -87,13 +80,13 @@ export function WrappedCard({ stats, theme = "lime", avatar = stats.avatarUrl, f
     <div style={{ display: "flex", gap: 22, marginTop: 42 }}>
       <div style={{ display: "flex", flexDirection: "column", width: "44%", borderTop: `2px solid ${t.ink}38`, paddingTop: 20 }}>
         <span style={{ fontSize: 14, letterSpacing: 2, opacity: .55, fontFamily: labelFontFamily }}>TOP LANGUAGE</span>
-        {topLanguage ? <>
+        {topLanguage ? <div style={{ display: "flex", flexDirection: "column" }}>
           <span style={{ fontSize: topLanguage.name.length > 14 ? 38 : 52, fontWeight: 700, letterSpacing: -2, marginTop: 10 }}>{topLanguage.name}</span>
           <span style={{ fontSize: 40, fontWeight: 700, marginTop: 2 }}>{Math.round(topLanguage.percentage)}%</span>
           <div style={{ display: "flex", width: "100%", height: 8, borderRadius: 4, overflow: "hidden", marginTop: 14, background: `${t.ink}18` }}>
             {stats.languages.map((language, index) => <span key={language.name} style={{ display: "flex", width: `${language.percentage}%`, height: "100%", background: languagePalette[index % languagePalette.length] }} />)}
           </div>
-        </> : <span style={{ fontSize: 25, marginTop: 14, opacity: .62 }}>NO DATA</span>}
+        </div> : <span style={{ fontSize: 25, marginTop: 14, opacity: .62 }}>NO DATA</span>}
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", width: "56%", borderTop: `2px solid ${t.ink}38`, paddingTop: 20 }}>

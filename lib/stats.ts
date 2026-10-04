@@ -81,7 +81,7 @@ function stackTag(languages: Language[]): DeveloperTag | null {
 }
 
 function habitTag(weekendEnergy: number, activeMonths: number, favoriteDay: string | null, activeDays: number): DeveloperTag | null {
-  if (activeDays === 0) return null;
+  if (activeDays < 7) return null;
   if (weekendEnergy >= 40) return { label: "Weekend Warrior", category: "habit" };
   if (weekendEnergy >= 25) return { label: "Weekend Hacker", category: "habit" };
   if (activeMonths === 12) return { label: "Year-Round Coder", category: "habit" };
@@ -93,13 +93,16 @@ function habitTag(weekendEnergy: number, activeMonths: number, favoriteDay: stri
 }
 
 function achievementTag(raw: RawWrappedData, streak: number, topRepoFocus: number, activeDays: number): DeveloperTag {
-  if (raw.commits === 0 && activeDays === 0) return { label: "A New Chapter", category: "achievement" };
+  if (raw.commits === 0 && activeDays === 0) return { label: "Dreaming in Code", category: "achievement" };
   if (raw.commits === 0) return { label: "Community Contributor", category: "achievement" };
+  const contributions = raw.days.filter(day => day.date.startsWith(`${raw.year}-`) && day.date <= raw.through).reduce((sum, day) => sum + day.contributionCount, 0);
+  if (raw.commits === 1 && contributions === 1) return { label: "One-Hit Wonder", category: "achievement" };
+  if (raw.commits <= 10 && contributions <= 10) return { label: "Side Quest Mode", category: "achievement" };
   if (streak >= 30) return { label: "Streak Master", category: "achievement" };
   if (streak >= 14) return { label: "On a Roll", category: "achievement" };
   if (activeDays >= 250) return { label: "Always Shipping", category: "achievement" };
   if (activeDays >= 150) return { label: "Frequent Shipper", category: "achievement" };
-  if (topRepoFocus >= 70) return { label: "Deep Diver", category: "achievement" };
+  if (topRepoFocus >= 70 && raw.commits >= 20 && activeDays >= 7 && raw.repositories <= raw.repositoryLanguages.length) return { label: "Deep Diver", category: "achievement" };
   if (raw.repositories >= 20) return { label: "Repo Ranger", category: "achievement" };
   if (raw.repositories >= 10) return { label: "Project Explorer", category: "achievement" };
   if (raw.commits >= 1000) return { label: "Four-Digit Club", category: "achievement" };

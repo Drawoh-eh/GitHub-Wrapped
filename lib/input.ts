@@ -3,9 +3,16 @@ export class WrappedError extends Error {
 }
 
 export function parseInput(username: string | null | undefined, yearValue: string | number | null | undefined, now = new Date()) {
-  const login = (username ?? "").trim();
+  let login = (username ?? "").trim();
+  if (/^(?:https?:\/\/|(?:www\.)?github\.com\/)/i.test(login)) {
+    try {
+      const url = new URL(/^https?:\/\//i.test(login) ? login : `https://${login}`);
+      if (!["github.com", "www.github.com"].includes(url.hostname.toLowerCase()) || url.username || url.password || url.port || !/^\/[a-z\d-]+\/?$/i.test(url.pathname)) throw new Error();
+      login = url.pathname.replace(/^\/|\/$/g, "");
+    } catch { throw new WrappedError("Enter a valid GitHub username or profile URL."); }
+  } else if (login.startsWith("@")) login = login.slice(1);
   if (!/^[a-z\d](?:[a-z\d-]{0,37}[a-z\d])?$/i.test(login) || login.includes("--")) {
-    throw new WrappedError("Enter a valid GitHub username (not a profile URL).");
+    throw new WrappedError("Enter a valid GitHub username or profile URL.");
   }
   const text = String(yearValue ?? now.getUTCFullYear());
   const year = /^\d{4}$/.test(text) ? Number(text) : NaN;

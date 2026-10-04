@@ -1,6 +1,17 @@
 import type { ContributionDay } from "./types";
 
 const LEVELS = { NONE: 0, FIRST_QUARTILE: 1, SECOND_QUARTILE: 2, THIRD_QUARTILE: 3, FOURTH_QUARTILE: 4 } as const;
+// A complete selected-year grid, aligned to Sunday. Missing/future dates stay blank.
+export function annualCalendarWeeks(days: ContributionDay[], year: number) {
+  const byDate = new Map(days.map(day => [day.date, day]));
+  const first = Date.UTC(year, 0, 1), end = Date.UTC(year + 1, 0, 1);
+  const cells: (ContributionDay | null)[] = Array(new Date(first).getUTCDay()).fill(null);
+  for (let time = first; time < end; time += 86_400_000) {
+    cells.push(byDate.get(new Date(time).toISOString().slice(0, 10)) ?? null);
+  }
+  while (cells.length % 7) cells.push(null);
+  return Array.from({ length: cells.length / 7 }, (_, index) => cells.slice(index * 7, index * 7 + 7));
+}
 export function contributionIntensity(day: ContributionDay) {
   if (day.contributionLevel) return LEVELS[day.contributionLevel];
   // Generated samples have no GitHub-provided levels.

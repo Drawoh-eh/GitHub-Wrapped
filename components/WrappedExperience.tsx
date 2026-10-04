@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { getDemoStats } from "@/lib/demo";
 import type { WrappedStats } from "@/lib/types";
 import { COPY, THEMES, type Theme } from "@/lib/presentation";
 import { recapPath, shareUrl } from "@/lib/links";
 import { withRequestTimeout } from "@/lib/client-request";
+import { createImageCache } from "@/lib/image-cache";
 import { CardPreview } from "./CardPreview";
 import { MonthlyChart } from "./MonthlyChart";
 import { ContributionCalendar } from "./ContributionCalendar";
@@ -29,6 +30,8 @@ export function WrappedExperience({ initialStats, initialUsername = "", initialY
   const [downloading, setDownloading] = useState(false);
   const [copying, setCopying] = useState(false);
   const [canCopyImage, setCanCopyImage] = useState(false);
+  const imageCache = useRef<ReturnType<typeof createImageCache> | null>(null);
+  if (!imageCache.current) imageCache.current = createImageCache();
   useEffect(() => { setCanCopyImage(Boolean(window.isSecureContext && typeof navigator.clipboard?.write === "function" && typeof window.ClipboardItem === "function" && (typeof ClipboardItem.supports !== "function" || ClipboardItem.supports("image/png")))); }, []);
   const stats = initialStats ?? getDemoStats(year);
   const isResult = Boolean(initialStats), c = COPY;
@@ -62,11 +65,12 @@ export function WrappedExperience({ initialStats, initialUsername = "", initialY
   }
   async function cardBlob() {
     const params = new URLSearchParams({ username: stats.username, year: String(stats.year), theme, ...(stats.isDemo ? { demo: "1" } : {}) });
-    return withRequestTimeout(async signal => {
+    const key = `${params}:${stats.fetchedAt ?? stats.through}`;
+    return imageCache.current!(key, () => withRequestTimeout(async signal => {
       const response = await fetch(`/api/card?${params}`, { signal });
       if (!response.ok || !response.headers.get("content-type")?.startsWith("image/png")) throw new Error(c.downloadError);
       return response.blob();
-    }, 40_000);
+    }, 40_000));
   }
   async function copyImage() {
     setCopying(true); setNotice("");
@@ -105,7 +109,7 @@ export function WrappedExperience({ initialStats, initialUsername = "", initialY
           <h1>{isResult ? c.result1 : c.title1}<br /><span>{isResult ? c.result2 : c.title2}</span></h1>
           <p className="hero-description">{c.intro}</p>
           <form className="username-form" onSubmit={generate} aria-busy={generating}>
-            <div className="form-fields"><div className="username-field"><label htmlFor="username">{c.username}</label><div className="input-wrap"><span>@</span><input id="username" name="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="Drawoh-eh" required maxLength={39} autoCapitalize="none" autoCorrect="off" spellCheck={false} disabled={generating} /></div></div><div className="year-field"><label htmlFor="year">{c.year}</label><select id="year" value={year} onChange={e => setYear(Number(e.target.value))} disabled={generating}>{Array.from({ length: currentYear - 2007 }, (_, i) => currentYear - i).map(y => <option key={y} value={y}>{y}</option>)}</select></div></div>
+            <div className="form-fields"><div className="username-field"><label htmlFor="username">{c.username}</label><div className="input-wrap"><span>@</span><input id="username" name="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="username or GitHub profile URL" required maxLength={256} autoCapitalize="none" autoCorrect="off" spellCheck={false} disabled={generating} /></div></div><div className="year-field"><label htmlFor="year">{c.year}</label><select id="year" value={year} onChange={e => setYear(Number(e.target.value))} disabled={generating}>{Array.from({ length: currentYear - 2007 }, (_, i) => currentYear - i).map(y => <option key={y} value={y}>{y}</option>)}</select></div></div>
             <button className="generate-button" type="submit" disabled={generating}><span>{generating ? c.generating : c.generate}</span>{generating ? <span className="spinner" /> : <ArrowIcon />}</button>
             {error && <p className="form-error" role="alert">{error}</p>}
           </form>
@@ -120,7 +124,7 @@ export function WrappedExperience({ initialStats, initialUsername = "", initialY
         <div className="section-title"><div className="eyebrow">{c.closer}</div><h2>{c.adds}</h2><p>{stats.isDemo ? c.sample : `${stats.year === currentYear ? c.ytd : c.full} · ${c.through} ${stats.through} · ${c.dates}`}</p></div>
         <div className="insight-grid"><div><span>{c.total}</span><strong>{stats.contributions.toLocaleString("en-US")}</strong><small>{c.allTypes}</small></div><div><span>{c.active}</span><strong>{stats.activeDays}</strong><small>{c.activeNote}</small></div><div><span>{c.streak}</span><strong>{stats.longestStreak}<em> {c.days}</em></strong><small>{c.streakNote}</small></div><div><span>{c.busiest}</span><strong className="date-stat">{stats.busiestDay?.date.slice(5) ?? "—"}</strong><small>{stats.busiestDay ? `${stats.busiestDay.contributionCount} ${c.contributions} · MM-DD` : c.next}</small></div></div>
         <div className="story-grid">
-          <div className="story-panel dna-panel"><span>{c.dnaTitle}</span><div className="tag-list">{stats.personalityTags.map(tag => <strong key={tag.category}>{tag.label}</strong>)}</div><p>{c.titleNote}</p></div>
+          <div className="story-panel dna-panel"><span>{c.dnaTitle}</span><div className="tag-list">{stats.personalityTags.map(tag => <strong key={tag.category}>{tag.label}</strong>)}</div><p>{c.titleNote} <a href={`${REPOSITORY}/blob/main/docs/data-and-api.md#playful-titles-and-small-samples`} target="_blank" rel="noreferrer">Title rules ↗</a></p></div>
           <div className="story-panel rhythm-panel"><span>{c.rhythmTitle}</span><div className="rhythm-stats"><div><strong>{Math.round(stats.codingRhythm.weekendEnergy)}%</strong><small>{c.weekendEnergy}</small></div><div><strong>{stats.codingRhythm.favoriteDay ?? "—"}</strong><small>{c.favoriteDay}</small></div><div><strong>{stats.codingRhythm.activeMonths}/12</strong><small>{c.activeMonths}</small></div></div><p>{Math.round(stats.codingRhythm.consistency)}% of elapsed calendar days were active contribution days.</p></div>
           <div className="story-panel quests-panel"><span>{c.mainQuests}</span><div className="quest-list">{stats.topRepositories.length ? stats.topRepositories.map((repo, index) => <div key={repo.name}><b>0{index + 1}</b><div><h3><a href={`https://github.com/${repo.name}`} target="_blank" rel="noreferrer">{repo.name} ↗</a></h3><small>{repo.commits.toLocaleString("en-US")} {c.commits}</small></div></div>) : <h3>{c.noRepo}</h3>}</div><p>{c.mainQuestsNote}{stats.topRepositoryIncomplete ? ` ${c.partialShort}` : ""}</p></div>
         </div>

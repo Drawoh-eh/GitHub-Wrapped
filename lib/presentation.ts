@@ -21,6 +21,9 @@ export function monthName(name: string | undefined) { return name ?? COPY.emptyM
 
 export function heroQuote(stats: WrappedStats) {
   const tags = new Set(stats.personalityTags.map(tag => tag.label));
+  if (tags.has("Dreaming in Code")) return { line1: "Plotting the", line2: "next big thing.", note: "a quiet calendar, an open chapter." };
+  if (tags.has("One-Hit Wonder")) return { line1: "One commit.", line2: "A plot twist.", note: "every story has a first scene." };
+  if (tags.has("Side Quest Mode")) return { line1: "A little code.", line2: "A side quest.", note: "small adventures count too." };
   if (tags.has("Streak Master") || tags.has("On a Roll") || tags.has("Steady Builder")) {
     return { line1: "You just", line2: "kept going.", note: "one contribution at a time." };
   }

@@ -20,7 +20,7 @@
 
 ## 生成你的年度回顾
 
-1. 打开 [GitHub Wrapped](https://git-hub-wrapped-chi.vercel.app)，输入 GitHub 用户名，选择年份。
+1. 打开 [GitHub Wrapped](https://git-hub-wrapped-chi.vercel.app)，输入 GitHub 用户名或粘贴主页链接，选择年份。
 2. 选择 **Lime（荧光绿）**、**Violet（紫罗兰）** 或 **Mono（黑白）** 主题。
 3. 下载 **1080 × 1350 PNG** 海报，在支持的浏览器中复制图片，或分享带有个性化预览的链接。
 
@@ -48,7 +48,7 @@
 ## 有哪些内容
 
 - **年度概览**：提交贡献数、贡献过的仓库数、最长连续贡献和最投入的月份。
-- **开发者 DNA**：根据语言构成、贡献节奏、连续贡献、项目专注度和年度活跃度生成 3 个趣味标签。
+- **开发者 DNA**：根据语言构成、贡献节奏、连续贡献、项目专注度和年度活跃度生成最多 3 个趣味标签。
 - **Coding Rhythm**：展示周末活力值、最活跃星期、活跃月份和贡献一致性。
 - **Main Quests**：展示所选年份公开仓库中 commit contributions 最多的前 2 个主战场项目。
 - **完整活动记录**：每月提交、贡献日历、活跃天数和仓库语言构成。点按或聚焦月份、日期可查看准确数量，贡献日历支持方向键浏览。
@@ -57,6 +57,12 @@
 - **易于理解的技术栈**：Next.js、React、TypeScript 和 GitHub GraphQL API，无需数据库或 AI API。
 
 > 语言占比统计的是当年提交过的公开仓库中，当前代码字节的构成，不代表你在该年亲手写出的代码占比。Coding Rhythm 使用 GitHub contribution calendar 的日期桶，不推断真实编码时段或用户时区。提交数遵循 GitHub 贡献规则。[查看详细统计口径（英文）。](docs/data-and-api.md#metric-definitions)
+
+### 低贡献年份也有故事
+
+支持直接粘贴 `@用户名` 或 GitHub 主页链接。海报热力图覆盖完整年度，并与页面日历使用相同颜色等级；下载与复制复用同一主题的图片。
+
+零贡献可获得 **Dreaming in Code（正在酝酿）**，仅一次提交且总贡献也为一次可获得 **One-Hit Wonder（一击登场）**，少量贡献可获得 **Side Quest Mode（支线任务中）**。这些只是娱乐称号，不评价能力或生产力。只有 Issue、PR 等活动时保留 **Community Contributor**；习惯类称号至少需要 7 个活跃日。[完整规则](docs/data-and-api.md#playful-titles-and-small-samples)。
 
 ## 本地运行
 
@@ -85,7 +91,7 @@ GITHUB_TOKEN=your_server_only_token
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FDrawoh-eh%2FGitHub-Wrapped&env=GITHUB_TOKEN)
 
 1. 按 Next.js 默认设置部署仓库，配置 `GITHUB_TOKEN` 环境变量。
-2. 把 [`lib/links.ts`](lib/links.ts) 中的 `SITE_URL` 改成你的正式公开域名，让分享链接指向自己的实例。
+2. 设置 `NEXT_PUBLIC_SITE_URL` 环境变量为你的正式 HTTPS 域名（例如 `https://wrapped.example.com`），让分享链接与海报网址指向你的实例。
 3. 修改域名或 Token 后重新部署，并确保访客能访问正式域名。
 
 用于编辑仓库的 GitHub 连接不会自动给部署后的应用提供 Token。本项目需要服务端运行，不能作为 GitHub Pages 纯静态网站导出。
