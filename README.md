@@ -20,11 +20,11 @@
 
 ## Make yours
 
-1. Open [GitHub Wrapped](https://git-hub-wrapped-chi.vercel.app), enter your GitHub username, and pick a year.
+1. Open [GitHub Wrapped](https://git-hub-wrapped-chi.vercel.app), enter your GitHub username (or paste your profile URL), and pick a year.
 2. Choose a card theme: **Lime**, **Violet**, or **Mono**.
 3. Download your **1080 × 1350 PNG**, copy the image in a supported browser, or share a link with a personalized preview.
 
-Each poster includes the project address. If image copying is unavailable or blocked, use **Download PNG**. Link previews keep the username, year, and theme; demo previews are labeled as sample data.
+Each poster includes the project address and a full-year contribution grid. Download and copy reuse the same rendered image for the selected theme. If image copying is unavailable or blocked, use **Download PNG**. Link previews keep the username, year, and theme; demo previews are labeled as sample data.
 
 No sign-up or installation needed to use the hosted site. Want a preview first? [The demo](https://git-hub-wrapped-chi.vercel.app/wrapped/octocat?year=2025&demo=1) uses clearly labeled sample data.
 
@@ -48,7 +48,7 @@ All three cards show **sample data**. Click a card to see the full-size PNG.
 ## What’s inside
 
 - **Your year at a glance** — commit contributions, contributed repositories, longest streak, and busiest month.
-- **Developer DNA** — three playful tags drawn from your language mix, contribution rhythm, streaks, focus, and yearly activity.
+- **Developer DNA** — up to three playful tags drawn from your language mix, contribution rhythm, streaks, focus, and yearly activity.
 - **Coding rhythm** — weekend energy, favorite contribution day, active months, and consistency based on GitHub’s contribution calendar.
 - **Main quests** — the two public repositories with the most commit contributions in the selected year.
 - **The fuller picture** — monthly activity, a contribution calendar, active days, and repository language mix. Tap or focus months and days for exact counts; browse the calendar with arrow keys.
@@ -57,6 +57,8 @@ All three cards show **sample data**. Click a card to see the full-size PNG.
 - **A small, inspectable stack** — Next.js, React, TypeScript, and GitHub’s GraphQL API. No database or AI API required.
 
 > Language percentages describe current code bytes in public repositories you committed to, not code you personally wrote that year. Coding rhythm uses GitHub contribution-calendar dates and does not infer coding hours or timezone. Commit counts follow GitHub’s contribution rules. [See the data definitions.](docs/data-and-api.md#metric-definitions)
+
+Quiet years get playful titles too: **Dreaming in Code**, **One-Hit Wonder**, and **Side Quest Mode**. Rhythm titles require at least seven active days. [Title rules](docs/data-and-api.md#playful-titles-and-small-samples).
 
 ## Run locally
 
@@ -85,7 +87,7 @@ Prefer a [fine-grained token](https://github.com/settings/personal-access-tokens
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FDrawoh-eh%2FGitHub-Wrapped&env=GITHUB_TOKEN)
 
 1. Deploy this repository with Vercel’s Next.js defaults and set `GITHUB_TOKEN`.
-2. Set `SITE_URL` in [`lib/links.ts`](lib/links.ts) to your public production domain so share links point to your instance.
+2. Set `NEXT_PUBLIC_SITE_URL` to your public HTTPS origin (for example, `https://wrapped.example.com`) so links and posters point to your instance.
 3. Redeploy after changing the domain or token. Ensure your public production domain is accessible to visitors.
 
 A GitHub connector used to edit the repository does not provide a token to the deployed app. A server runtime is required; GitHub Pages static export is not supported.

@@ -52,7 +52,7 @@ test("username and year validation prevents malformed or future requests", () =>
   const now = new Date("2026-10-02T13:00:00Z");
   assert.equal(parseInput(" Drawoh-eh ", "2026", now).to, now.toISOString());
   assert.equal(parseInput("a", 2024, now).to, "2024-12-31T23:59:59Z");
-  for (const username of ["", "-user", "user-", "a--b", "https://github.com/a", "a/b", "a".repeat(40)]) assert.throws(() => parseInput(username, 2026, now));
+  for (const username of ["", "-user", "user-", "a--b", "a/b", "a".repeat(40)]) assert.throws(() => parseInput(username, 2026, now));
   for (const year of [2007, 2027, "2026abc", "NaN", ""]) assert.throws(() => parseInput("octocat", year, now));
 });
 

@@ -27,6 +27,21 @@ Live calendars preserve GraphQL API counts and intensity levels. GitHub's API an
 
 References: [GitHub contribution rules](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/troubleshooting-missing-contributions), [GraphQL user reference](https://docs.github.com/en/graphql/reference/users).
 
+## Playful titles and small samples
+
+Titles describe visible activity in the selected year, not ability or productivity. No activity does not imply that someone never codes or is new to programming.
+
+| Title | Rule |
+| --- | --- |
+| Dreaming in Code | Zero commit contributions and zero active calendar days. |
+| One-Hit Wonder | Exactly one commit contribution and one total calendar contribution. |
+| Side Quest Mode | 1–10 commit contributions and at most 10 total calendar contributions, after the one-contribution rule. |
+| Community Contributor | Zero commit contributions, but some calendar activity such as issues, PRs or reviews. Takes priority over low-activity titles. |
+| Rhythm titles | Require at least 7 active calendar days. Weekend Warrior requires at least 40% of contributions on weekends; Weekend Hacker requires at least 25%. |
+| Deep Diver | At least 20 commit contributions, at least 7 active days, complete repository coverage, and at least 70% of returned public-repository commit contributions in one repository. Higher-priority achievement titles can take precedence. |
+
+The poster calendar includes the entire selected year, aligned to weekdays (365 or 366 dates). Dates absent from the API, including future dates, remain blank. The poster and interactive calendar use the same GitHub intensity levels; only generated samples without levels use count thresholds.
+
 ## Token setup
 
 Set `GITHUB_TOKEN` on the server. Locally, use `.env.local`; on Vercel, use project environment variables and redeploy after changes.
@@ -49,7 +64,7 @@ GET /api/og
 
 | Parameter | Routes | Meaning |
 | --- | --- | --- |
-| `username` | JSON and PNG APIs; path segment for recap pages | A valid GitHub username. |
+| `username` | JSON and PNG APIs; path segment for recap pages | A GitHub username, `@username`, or GitHub profile URL (repository URLs and other hosts are rejected). |
 | `year` | All recap routes | From 2008 to the current year; defaults to the current year when omitted. |
 | `theme` | Homepage, recap page, PNG and social preview APIs | `lime`, `violet`, or `mono`. Invalid values fall back to `lime`. |
 | `demo=1` | JSON API, PNG and social preview APIs, recap page | Deterministic sample data for `octocat`, explicitly labeled as a demo. |
@@ -57,9 +72,11 @@ GET /api/og
 
 The interface and exported cards are English-only. Legacy `lang` parameters are ignored. A theme change removes `lang` from the page URL; new share links do not include it.
 
-JSON successes return `WrappedStats` ([schema](../lib/types.ts)). PNG successes use `image/png` at 1080 × 1350. Errors return JSON. Share URLs always use `SITE_URL` in [`lib/links.ts`](../lib/links.ts), never a preview host or forwarded header; update it for your own public domain.
+JSON successes return `WrappedStats` ([schema](../lib/types.ts)). PNG successes use `image/png` at 1080 × 1350. Errors return JSON. Share URLs always use `SITE_URL` in [`lib/links.ts`](../lib/links.ts), never a preview host or forwarded header; set `NEXT_PUBLIC_SITE_URL` to your own public HTTPS origin and rebuild. The default remains the hosted project domain; paths, query strings and credentials are rejected.
 
 Social previews use `/api/og` at **1200 × 630**, with Open Graph and Twitter metadata on recap pages. Without a username it renders a generic project preview. If a lookup fails, it returns a generic image with `no-store`; successful previews may be cached for one hour. Social platforms may cache previews independently. Demo previews are explicitly labeled.
+
+Within a mounted recap, download and copy share up to three cached PNG promises, keyed by account, year, theme, demo mode and data snapshot. Concurrent actions share one render; failures are evicted and can be retried. A refreshed recap uses a new cache.
 
 Image copying uses the browser’s PNG clipboard API in a secure context. Unsupported browsers keep the PNG download action; permission and rendering failures show a download fallback message.
 

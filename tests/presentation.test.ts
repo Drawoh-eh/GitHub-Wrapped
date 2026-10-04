@@ -38,7 +38,7 @@ test("developer DNA combines stack, habit and achievement while coding rhythm us
   assert.equal(stats.codingRhythm.favoriteDay, "Saturday");
   assert.equal(stats.codingRhythm.activeMonths, 2);
   assert.equal(Math.round(stats.codingRhythm.consistency), 43);
-  assert.deepEqual(stats.personalityTags.map(tag => tag.label), ["Pythonista", "Weekend Warrior", "Deep Diver"]);
+  assert.deepEqual(stats.personalityTags.map(tag => tag.label), ["Pythonista", "Century Club"]);
 });
 
 test("non-commit activity is recognized as community contribution rather than an empty year", () => {

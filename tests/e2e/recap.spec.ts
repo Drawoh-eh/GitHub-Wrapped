@@ -95,6 +95,7 @@ test("theme, PNG download and chart interactions remain usable", async ({ page }
   expect(bytes.subarray(0, 8).toString("hex")).toBe("89504e470d0a1a0a");
   expect(bytes.readUInt32BE(16)).toBe(1080);
   expect(bytes.readUInt32BE(20)).toBe(1350);
+  expect(bytes).toMatchSnapshot("violet-export.png", { maxDiffPixelRatio: 0.001 });
   await expect(page.locator(".month-label").first()).toHaveText("Jan");
   await expect(page.locator(".month-label").last()).toHaveText("Dec");
   await page.locator(".month-column").first().click();
@@ -104,4 +105,47 @@ test("theme, PNG download and chart interactions remain usable", async ({ page }
   await page.keyboard.press("ArrowRight");
   await expect(page.locator(".contribution-calendar button").nth(7)).toBeFocused();
   expect(errors).toEqual([]);
+});
+
+test("download and copy reuse a PNG and changing themes renders a new one", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator.clipboard, "write", { configurable: true, value: async (items: ClipboardItem[]) => {
+      const image = await items[0].getType("image/png");
+      if (image.type !== "image/png" || image.size === 0) throw new Error("Invalid image");
+    } });
+  });
+  let renders = 0;
+  page.on("request", request => { if (new URL(request.url()).pathname === "/api/card") renders++; });
+  await page.goto(demo);
+  let download = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download PNG", exact: true }).click();
+  await download;
+  await page.getByRole("button", { name: "Copy image", exact: true }).click();
+  await expect(page.getByRole("status")).toContainText("Image copied");
+  expect(renders).toBe(1);
+  await page.getByRole("button", { name: "Mono", exact: true }).click();
+  download = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download PNG", exact: true }).click();
+  expect((await download).suggestedFilename()).toContain("mono");
+  expect(renders).toBe(2);
+  await page.getByRole("button", { name: "Lime", exact: true }).click();
+  await page.getByRole("button", { name: "Copy image", exact: true }).click();
+  await expect(page.getByRole("status")).toContainText("Image copied");
+  expect(renders).toBe(2);
+});
+
+test("full profile URLs fit the form and normalize through the API", async ({ page, request }) => {
+  const profile = "https://github.com/a-very-long-but-valid-github-username/";
+  await page.goto("/");
+  await page.locator("#username").fill(profile);
+  await expect(page.locator("#username")).toHaveValue(profile);
+  // Demo lookup still runs the same parser, without requiring a server token.
+  const response = await request.get(`/api/wrapped?${new URLSearchParams({ username: profile, year: "2025", demo: "1" })}`);
+  expect(response.ok()).toBe(true);
+  await page.route("**/api/wrapped?*", async route => {
+    expect(new URL(route.request().url()).searchParams.get("username")).toBe(profile);
+    await route.fulfill({ json: { username: "octocat", year: 2025, isDemo: true } });
+  });
+  await page.locator(".generate-button").click();
+  await expect(page).toHaveURL(/wrapped\/octocat\?year=2025/);
 });
